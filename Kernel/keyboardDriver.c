@@ -1,86 +1,118 @@
+#define CHARCODE_MAX 128
+#define BUFFCAP 128
+#define TRUE 1
+#define FALSE 0
+#define ESCAPE 1
+#define RSHIFTCODE 42
+#define LSHIFTCODE 54
+#define CAPSLOCK 58
 
-#include "scancodes.h"
-
-#define BUFFCAP 100
-
-extern char read_key();
-static char buffer[BUFFCAP];
-static unsigned int buffsize=0;
-static unsigned int current_pos=0;
-static int shift_pressed=FALSE;
-static int shift_pressed=FALSE;
-static int ctrl_pressed=FALSE;
-static int capslock_times_pressed = 0;
-static int capslock_active = FALSE;
+static int buffer[BUFFCAP];
+static unsigned int ret_index=0;
+static unsigned int store_index=0;
+static int buffsize = 0;
+static int shift=FALSE;
+static int caps=FALSE;
+static int capsActive=FALSE;
+static int capsCount=0;
 
 
-
-void save_scancode(){
-
+void addToBuffer(){
+	
 	// Si esta lleno el buffer no podemos guardar
 	if (buffsize == BUFFCAP){
 		return;
 	}
 
-	int k=read_key(); //en asm
+	int k=get_key(); //en asm ---> GLOBAL read_key  read_key: in al, 60h     ret
 
-	//si es un scancode valido
+  	//si es un scancode valido
 	if(k>0 && k<CHARCODE_MAX){
 		//si es un caracter
-		if( characterKey() ){
+		if( !specialKeys(k) ){
 			buffsize++;
-			buffer[current_pos++]= k;
-
-		}
+			buffer[store_index++]= k;
+		}	
+	
 	}else if(k<0){
-		//es el scancode de cuando soltas una tecla
-	}
-
+		specialKeys(k + CHARCODE_MAX);
+	}	//es el scancode de cuando soltas una tecla
+	
 	//si se lleno el buffer
-	if(current_pos == BUFFCAP){
-		current_pos =0 ;
-	}
+	if (store_index == BUFFCAP){
+    	store_index = 0;	
+    }
 }
 
+//tenemos esta funcion para interpretar la tecla segun los flags q tengamos activados
 int get_char(){
 	if(buffsize == 0)
 		return -1;
-	char k=buffer[current_pos--];
+		
+	int k=buffer[ret_index++];
 	buffsize--;
-	//tenemos esta funcion para interpretar la tecla segun los flags q tengamos activados
-	return keyValue(k);
+	
+	if (ret_index == BUFFCAP){
+        ret_index = 0;
+	}    
+
+	return chooseKeyboard(k);
 }
 
-int keyValue(int k){
+int chooseKeyboard(int k){
 
-	if( keyboard[k] == 0 ){
-		return -1;
+	if (keybnor[k] == 0){ // no es imprimible
+    	return -1;
+    }
+
+	if(!capsLockActivated && !shiftPressed){
+    	return keybnor[k];
 	}
 
-	//manejar dependiendo de cada uno
-	if(capslock_active && !shift_pressed && !ctrl_pressed){
+	if(capsLockActivated && !shiftPressed){
+    	return keybcaps[k];
+	}
 
+	if(!capsLockActivated && shiftPressed){
+    	return keybshft[k];
 	}
-	if(capslock_active && shift_pressed && !ctrl_pressed){
-		
+
+	if(capsLockActivated && shiftPressed){
+    	return keybshftcaps[k];
 	}
-	if(capslock_active && shift_pressed && ctrl_pressed){
-		
-	}
-	if(capslock_active && !shift_pressed && ctrl_pressed){
-		
-	}
-	if(!capslock_active && shift_pressed && !ctrl_pressed){
-		
-	}
-	if(!capslock_active && !shift_pressed && ctrl_pressed){
-		
-	}
-	if(!capslock_active && shift_pressed && ctrl_pressed){
-		
-	}
-	if(!capslock_active && shift_pressed && ctrl_pressed){
-		
-	}
-	return keyboard[k];
+
+}
+
+
+int specialKeys(char k){
+
+	switch(k){
+
+    	case RSHIFTCODE:
+          shift=!shift;
+          return TRUE;
+          break;
+
+    	case LSHIFTCODE:
+          shift=!shift;
+          return TRUE;
+          break;
+
+    	case CAPSLOCK:
+          caps = !caps;
+          capsCount += 1;
+          if(capsCount % 2 == 0) { //fue apretado y soltado
+            capsActive = !capsActive;
+            capsCount = 0;
+          }
+          return TRUE;
+          break;
+
+    	default:
+          return FALSE;
+          break;
+
+  	}
+  
+  	return FALSE;
 }
