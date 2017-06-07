@@ -1,3 +1,6 @@
+#include "scancodes.h"
+
+
 #define CHARCODE_MAX 128
 #define BUFFCAP 128
 #define TRUE 1
@@ -16,6 +19,7 @@ static int caps=FALSE;
 static int capsActive=FALSE;
 static int capsCount=0;
 
+int get_key();
 
 void addToBuffer(){
 	
@@ -65,26 +69,26 @@ int chooseKeyboard(int k){
     	return -1;
     }
 
-	if(!capsLockActivated && !shiftPressed){
+	if(!capsActive && !shift){
     	return keybnor[k];
 	}
 
-	if(capsLockActivated && !shiftPressed){
+	if(capsActive && !shift ){
     	return keybcaps[k];
 	}
 
-	if(!capsLockActivated && shiftPressed){
+	if(!capsActive && shift){
     	return keybshft[k];
 	}
 
-	if(capsLockActivated && shiftPressed){
+	if(capsActive && shift){
     	return keybshftcaps[k];
 	}
 
 }
 
 
-int specialKeys(char k){
+int specialKeys(int k){
 
 	switch(k){
 

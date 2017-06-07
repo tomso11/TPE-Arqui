@@ -1,5 +1,5 @@
-GLOBAL read_key
+GLOBAL get_key
 
-read_key:
+get_key:
 	in al,60h ; accede al teclado
 	ret
