@@ -4,6 +4,12 @@
 #include <moduleLoader.h>
 #include <naiveConsole.h>
 
+#include <driverVideo.h>
+#include <keyboardDriver.h>
+#include <interruptions.h>
+#include <driverKeyboard.h>
+#include <mouseDriver.h>
+
 extern uint8_t text;
 extern uint8_t rodata;
 extern uint8_t data;
@@ -16,7 +22,9 @@ static const uint64_t PageSize = 0x1000;
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
 
+
 typedef int (*EntryPoint)();
+typedef void (*handler_t)(void);
 
 
 void clearBSS(void * bssAddress, uint64_t bssSize)
@@ -80,9 +88,7 @@ void * initializeKernelBinary()
 	return getStackBase();
 }
 
-void * printCareta(){
-	
-}
+
 int main()
 {	
 	ncPrint("[Kernel Main]");
@@ -94,6 +100,7 @@ int main()
 	ncPrintHex(((EntryPoint)sampleCodeModuleAddress)());
 	ncNewline();
 	ncNewline();
+	
 
 	ncPrint("  Sample data module at 0x");
 	ncPrintHex((uint64_t)sampleDataModuleAddress);
@@ -102,7 +109,22 @@ int main()
 	ncPrint((char*)sampleDataModuleAddress);
 	ncNewline();
 
-	ncPrint("GATO"); //test
 	ncPrint("[Finished]");
+
+
+	initialize_Mouse();
+	//iSetHandler(0x20, (uint64_t) irq0Handler);
+	iSetHandler(0x21, (uint64_t) &irq1Handler);
+	iSetHandler(0x60, (uint64_t) &irq12Handler);
+	iSetHandler(0x80, (uint64_t) &irq80Handler);
+	
+	setPicMaster(0xF);
+	sti();
+
+	ncPrint("hola");
+	console();
+	printChar('a');
+
+
 	return 0;
 }

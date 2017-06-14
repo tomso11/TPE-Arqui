@@ -1,4 +1,5 @@
 #include "scancodes.h"
+#include "keyboardDriver.h"
 
 
 #define CHARCODE_MAX 128
@@ -10,7 +11,7 @@
 #define LSHIFTCODE 54
 #define CAPSLOCK 58
 
-static int buffer[BUFFCAP];
+static char buffer[BUFFCAP];
 static unsigned int ret_index=0;
 static unsigned int store_index=0;
 static int buffsize = 0;
@@ -19,11 +20,12 @@ static int caps=FALSE;
 static int capsActive=FALSE;
 static int capsCount=0;
 
-int get_key();
+char get_key();
 
 void addToBuffer(){
 	
 	// Si esta lleno el buffer no podemos guardar
+	// podemos hacer un buffer circular ( a implementar dsp )
 	if (buffsize == BUFFCAP){
 		return;
 	}
@@ -53,7 +55,7 @@ int get_char(){
 	if(buffsize == 0)
 		return -1;
 		
-	int k=buffer[ret_index++];
+	char k=buffer[ret_index++];
 	buffsize--;
 	
 	if (ret_index == BUFFCAP){
@@ -119,4 +121,11 @@ int specialKeys(int k){
   	}
   
   	return FALSE;
+}
+
+char pollBuffer(){
+	if(ret_index == 0){
+		return '0';
+	}
+	return buffer[ret_index--];
 }

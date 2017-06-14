@@ -4,15 +4,17 @@
 
 #include <stdint.h>
 
-void printOnScreenChar(char c);
-void printOnScreen(char* string);
-void clearScreen();
-void myNewLine();
+void printChar(char c);
+void printString(char* string);
+void clear();
+void insertLine();
 void welcomeMessage();
 void shell();
 void displayTime();
 int _sysTime(int date);
 void backspace(void);
 void scroll(void);
+void console();
+void testfoo(void);
 
 #endif
