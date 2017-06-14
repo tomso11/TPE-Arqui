@@ -1,5 +1,6 @@
 #include <interruptions.h>
 #include <driverVideo.h>
+#include <keyboardDriver.h>
 
 void mouse_wait(unsigned char type){
   unsigned int time_out=100000;
@@ -76,7 +77,6 @@ void initialize_Mouse() {
 
 
 void mouse_handler(){
-	printString("Mouse handler...");
   static unsigned char cycle = 0;
   static char mouse_bytes[3];
   mouse_bytes[cycle++] = read_port(0x60);
@@ -98,5 +98,32 @@ void mouse_handler(){
       printString("Left button is pressed!");
     // do what you want here, just replace the puts's to execute an action for each button
     // to use the coordinate data, use mouse_bytes[1] for delta-x, and mouse_bytes[2] for delta-y
+  }
+}
+
+void mouse_Handler() //struct regs *a_r (not used but just there)
+{
+  unsigned char mouse_cycle=0;
+  signed char mouse_byte[3];    //signed char
+  signed char mouse_x=0;         //signed char
+  signed char mouse_y=0;         //signed char
+
+  switch(mouse_cycle)
+  {
+    case 0:
+      mouse_byte[0]=read_port(0x60);
+      printString("pushed");
+      mouse_cycle++;
+      break;
+    case 1:
+      mouse_byte[1]=read_port(0x60);
+      mouse_cycle++;
+      break;
+    case 2:
+      mouse_byte[2]=read_port(0x60);
+      mouse_x=mouse_byte[1];
+      mouse_y=mouse_byte[2];
+      mouse_cycle=0;
+      break;
   }
 }

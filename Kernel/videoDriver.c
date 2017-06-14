@@ -53,17 +53,17 @@ void eraseLine(int line){
 }
 
 void printChar(char character){
-	if(character == '\n'){
+	 if(character == '\n'){
 		insertLine();
-	}else{
-		if(character == '\b'){
+		}else{
+	 	if(character == '\b'){
 			currentVideo=currentVideo-2;
 			*currentVideo=' ';
 		}else{
 			*currentVideo = character;
 			currentVideo += 2;
 		}
-	}
+	 }
 }
 
 void insertLine(){

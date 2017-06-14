@@ -20,36 +20,14 @@ irq0Handler:
 	irqHandler 0
 	
 irq1Handler:
-	; Keyboard interrupt. IRQ 0x01, INT 0x21
-; This IRQ runs whenever there is input on the keyboard
-align 16
-keyboard:
-	push rdi
-	push rax
-
-	xor eax, eax
-
-	in al, 0x60			; Get the scancode from the keyboard
-	test al, 0x80
-	jnz keyboard_done
-
-	mov [0x000B8088], al		; Dump the scancode to the screen
-
-
-keyboard_done:
-	mov al, 0x20			; Acknowledge the IRQ
-	out 0x20, al
-
-	pop rax
-	pop rdi
-	iretq
-	;irqHandler1
+	irqHandler 1
 
 irq12Handler:
-	irqHandler 2
+	irqSlaveHandler 2
 
 irq80Handler:
 	irqHandler 3
+
 
 sti:
 	sti

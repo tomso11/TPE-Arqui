@@ -88,7 +88,6 @@ void * initializeKernelBinary()
 	return getStackBase();
 }
 
-
 int main()
 {	
 	ncPrint("[Kernel Main]");
@@ -113,18 +112,20 @@ int main()
 
 
 	initialize_Mouse();
-	//iSetHandler(0x20, (uint64_t) irq0Handler);
+	iSetHandler(0x20, (uint64_t) irq0Handler);
 	iSetHandler(0x21, (uint64_t) &irq1Handler);
-	iSetHandler(0x60, (uint64_t) &irq12Handler);
+	iSetHandler(0x2C, (uint64_t) &irq12Handler);
 	iSetHandler(0x80, (uint64_t) &irq80Handler);
 	
-	setPicMaster(0xF);
+	setPicMaster(0xF9);
+	setPicSlave(0x0);
 	sti();
 
 	ncPrint("hola");
-	console();
+	//ncClear();
+	//console();
 	printChar('a');
-
+	while(1);
 
 	return 0;
 }

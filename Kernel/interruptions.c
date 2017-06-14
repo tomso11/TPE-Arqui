@@ -3,6 +3,7 @@
 #include <keyboardDriver.h>
 #include <driverKeyboard.h>
 #include <mouseDriver.h>
+#include <naiveConsole.h>
 
 
 static int i = 0;
@@ -31,7 +32,7 @@ void iSetHandler(int index, uint64_t handler) {
 	IDT[index].offset_m = (uint16_t) (handler >> 16) & 0xFFFF;
 	IDT[index].offset_h = (uint32_t) (handler >> 32) & 0xFFFFFFFF;
 	
-IDT[index].selector = 0x08;
+	IDT[index].selector = 0x08;
 	IDT[index].zero_l = 0;
 	
 	IDT[index].attrs = 0x8E;
@@ -47,11 +48,16 @@ void tickHandler() {
 }
 
 void keyboardHandler(){
-	testfoo();
+	keyboard_handler(); // lo de abajo funciona pero imprime con unos espacios raros q la verdad ni idea asique hay q arreglarlo
+	// addToBuffer();
+	// char aux=get_char();
+	// printChar(aux);
+	// //testfoo();
 }
 
 void mouseHandler(){
-	mouse_handler();
+	//testfoo();
+	mouse_Handler();
 
 }
 
