@@ -1,4 +1,4 @@
-#include <terminal.h>
+#include <shell.h>
 #include <driverVideo.h>
 
 void terminal(void) {
@@ -7,7 +7,7 @@ void terminal(void) {
 	int proc;
 
 	do {
-		printOnScreen("[User@gatOS]$ ");
+		printString("[User@gatOS]$ ");
 		command=input_line();
 		proc=process_start(command);
 		while( process_executing(proc) ){
@@ -26,4 +26,33 @@ void terminal(void) {
 		while(1);
 	} while(!exit);
 	return !exit;
+}
+
+char* input_line(){
+	return 0;
+}
+int process_start(char* cmd){
+	return 0;
+}
+int process_executing(int proc){
+	return 0;
+}
+int process_waiting_input(){
+	return 0;
+
+}
+void process_send_input(int proc, char* line){
+	return ;
+}
+int process_waiting_output(){
+	return 0;
+}
+char* process_get_output(){
+	return 0;
+}
+void output_line(){
+	return;
+}
+void end(){
+	return;
 }
