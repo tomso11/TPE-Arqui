@@ -112,6 +112,8 @@ int main()
 
 
 	initialize_Mouse();
+	
+	
 	iSetHandler(0x20, (uint64_t) irq0Handler);
 	iSetHandler(0x21, (uint64_t) &irq1Handler);
 	iSetHandler(0x2C, (uint64_t) &irq12Handler);
@@ -125,6 +127,8 @@ int main()
 	//ncClear();
 	//console();
 	printChar('a');
+	clear();
+	initialize_cursor();
 	while(1);
 
 	return 0;

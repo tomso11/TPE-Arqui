@@ -1,6 +1,10 @@
 #include <interruptions.h>
 #include <driverVideo.h>
 #include <keyboardDriver.h>
+#include "mouseDriver.h"
+
+int dx;
+int dy;
 
 void mouse_wait(unsigned char type){
   unsigned int time_out=100000;
@@ -83,13 +87,16 @@ void mouse_handler(){
  
   if (cycle == 3) { // if we have all the 3 bytes...
     cycle = 0; // reset the counter
+    // to use the coordinate data, use mouse_bytes[1] for delta-x, and mouse_bytes[2] for delta-y
+    mouse_bytes[1]=dx;
+    mouse_bytes[2]=dy;
     // do what you wish with the bytes, this is just a sample
     if ((mouse_bytes[0] & 0x80) || (mouse_bytes[0] & 0x40))
       return; // the mouse only sends information about overflowing, do not care about it and return
-    // if (!(mouse_bytes[0] & 0x20))
-    //   y |= 0xFFFFFF00; //delta-y is a negative value
-    // if (!(mouse_bytes[0] & 0x10))
-    //   x |= 0xFFFFFF00; //delta-x is a negative value
+    if (!(mouse_bytes[0] & 0x20))
+       dy |= 0xFFFFFF00; //delta-y is a negative value
+    if (!(mouse_bytes[0] & 0x10))
+       dx |= 0xFFFFFF00; //delta-x is a negative value
     if (mouse_bytes[0] & 0x4)
       printString("Middle button is pressed!");
     if (mouse_bytes[0] & 0x2)
@@ -97,11 +104,11 @@ void mouse_handler(){
     if (mouse_bytes[0] & 0x1)
       printString("Left button is pressed!");
     // do what you want here, just replace the puts's to execute an action for each button
-    // to use the coordinate data, use mouse_bytes[1] for delta-x, and mouse_bytes[2] for delta-y
+    
   }
 }
 
-void mouse_Handler() //struct regs *a_r (not used but just there)
+void mouse_Handler() 
 {
   unsigned char mouse_cycle=0;
   signed char mouse_byte[3];    //signed char
@@ -110,20 +117,97 @@ void mouse_Handler() //struct regs *a_r (not used but just there)
 
   switch(mouse_cycle)
   {
+    
     case 0:
       mouse_byte[0]=read_port(0x60);
-      printString("pushed");
+      if(mouse_byte[0] & 0x4){
+        printString("Middle button");
+      }
+      if(mouse_byte[0] & 0x2){
+        printString("Right button");
+      }
+      if(mouse_byte[0] & 0x1){
+        printString("Left button");
+      }
       mouse_cycle++;
       break;
     case 1:
+    printChar(mouse_byte[0]);
+    printChar(mouse_byte[1]);
+    printChar(mouse_byte[2]);
       mouse_byte[1]=read_port(0x60);
+      mouse_x=mouse_byte[1];
       mouse_cycle++;
       break;
     case 2:
       mouse_byte[2]=read_port(0x60);
-      mouse_x=mouse_byte[1];
       mouse_y=mouse_byte[2];
       mouse_cycle=0;
       break;
+  }
+}
+
+uint8_t mouse_cycle = 0;
+int8_t  mouse_byte[3];
+
+void mouse_handle() {
+  uint8_t status = read_port(MOUSE_STATUS);
+  while (status & MOUSE_BBIT) {
+    int8_t mouse_in = read_port(MOUSE_PORT);
+    if (status & MOUSE_F_BIT) {
+      switch (mouse_cycle) {
+        case 0:
+          mouse_byte[0] = mouse_in;
+          if (!(mouse_in & MOUSE_V_BIT)) return;
+          ++mouse_cycle;
+          break;
+        case 1:
+          mouse_byte[1] = mouse_in;
+          ++mouse_cycle;
+          break;
+        case 2:
+          mouse_byte[2] = mouse_in;
+          /* We now have a full mouse packet ready to use */
+          if (mouse_byte[0] & 0x80 || mouse_byte[0] & 0x40) {
+            /* x/y overflow? bad packet! */
+            break;
+          }
+          mouse_device_packet_t packet;
+          packet.magic = MOUSE_MAGIC;
+          packet.x_difference = mouse_byte[1];
+          packet.y_difference = mouse_byte[2];
+          packet.buttons = 0;
+          if (mouse_byte[0] & 0x01) {
+            packet.buttons |= LEFT_CLICK;
+          }
+          if (mouse_byte[0] & 0x02) {
+            packet.buttons |= RIGHT_CLICK;
+          }
+          if (mouse_byte[0] & 0x04) {
+            packet.buttons |= MIDDLE_CLICK;
+          }
+          if (!(mouse_byte[0] & 0x20))
+              packet.y_difference |= 0xFFFFFF00; //delta-y is a negative value
+          if (!(mouse_byte[0] & 0x10))
+              packet.x_difference |= 0xFFFFFF00; //delta-x is a negative value
+          mouse_packet_handler(packet);
+          mouse_cycle = 0;
+      }
+    }
+    
+    status = read_port(MOUSE_STATUS);
+  }
+}
+
+void mouse_packet_handler(mouse_device_packet_t packet){
+  update_cursor(packet.y_difference/125, packet.x_difference/125);
+  if(packet.buttons == LEFT_CLICK){
+    printString("Left Button");
+  }
+  if(packet.buttons == RIGHT_CLICK){
+    printString("Right Button");
+  }
+  if(packet.buttons == MIDDLE_CLICK){
+    printString("Middle Button");
   }
 }

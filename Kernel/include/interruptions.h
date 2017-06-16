@@ -19,5 +19,6 @@ void keyboardHandler(void);
 void mouseHandler(void);
 void syscallHandler(void);
 void initialize_Mouse(void);
+void cursor();
 
 #endif
