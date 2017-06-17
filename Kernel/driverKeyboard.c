@@ -47,9 +47,6 @@ void keyboard_handler(void) {
 
 		switch(keycode) {
 			case 14:
-				// if(buffer[bufferPlace-1] == 28) {
-				// 	backspace(1);
-				// }
 				backspace();
 				bufferPlace--;
 				break;

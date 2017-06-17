@@ -12,10 +12,6 @@ static unsigned char * const video = (unsigned char*)0xB8000;
 static unsigned char * currentVideo = (unsigned char*)0xB8000;
 static const unsigned int width = 80;
 static const unsigned int height = 25;
-// static unsigned char * curr_row=(unsigned char) (currentVideo/(unsigned char)width);
-// static unsigned char * curr_col=(unsigned char) (currentVideo%(unsigned char)width);
-#define ROW(c) ( ((c-video) - ( (c-video) % ((width)*2) ) )/ ((width)*2) )
-#define COL(c) ((c-video) % (width*2))
 static unsigned char cursor_x=0;
 static unsigned char cursor_y=0;
 
@@ -33,72 +29,13 @@ void initialize_cursor(){
 
 
 
-void scroll(){
-	int line = 24;
-	char * lineText;
-	char * aux;
-
-	while ( line >= 0 ){
-		copyLine(aux, line);
-		eraseLine(line);
-		if( lineText != 0 ){
-			printString( lineText );
-		}
-		line--;
-	}
-
-}
-
-void copyLine(char * aux, int line){
-	int i;
-	for( i=0; i< width; i++){
-		aux[i]= (char) video + 80* 2 * line + i * 2; // video + 160*line nos lleva a la linea que buscamos y i*2 nos lleva al caracter.
-	}
-}
-
-void eraseLine(int line){
-	int i;
-
-
-	for(i=0; i < width ; i++ ){
-		video[80*2*line+i*2]= ' ' ;
-	}
-	currentVideo=video+80 * 2 * (line-1); 
-}
-
 void printChar(char character){
-	if( ((currentVideo-video) % (width*2)) == 0 && ( (currentVideo-video) != 0 ) ){
-		//insertLine(); // terminar de implementar
-	}
-	if( ((currentVideo - video) % ((width*2) * (height) )) == 0 && ( (currentVideo-video) != 0 ) ){
-		eraseLine(0);
-		currentVideo=video;
-	} 
-	 if(character == '\n'){
-		insertLine();
-		}else{
-	 	if(character == '\b'){
-			currentVideo=currentVideo-2;
-			*currentVideo=' ';
-		}else{
-			*currentVideo = character;
-			currentVideo += 2;
-		}
-	 }
-	 // update_cursor(ROW((currentVideo-1)), COL((currentVideo-1)));   // lo hacemos mas adelante
+	
+	*currentVideo = character;
+	currentVideo += 2;
+
 }
 
-void insertLine(){
-	unsigned char * video_aux=currentVideo;
-	int i=0;
-
-	for (; ((unsigned char)(video_aux+(i*2) - video) % (width * 2) != 0 ); i++){
-		//video_aux+(unsigned char)i*2=' ';
-	}
-	// do{
-	// 	printChar(' ');
-	// }while((unsigned char)(currentVideo - video) % (width * 2) != 0);
-}
 
 void clear(){
 	int i;
@@ -108,21 +45,6 @@ void clear(){
 	currentVideo = video;
 }
 
-
-void console(){
-	char aux='0';
-	printString("It Works!");
-	while(1){
-		aux=get_char();
-		if( aux != -1){
-			printString("yes");
-		}
-	}
-}
-
-void testfoo(){
-	printString("this works");
-}
 
  /* void update_cursor(int row, int col)
   * by Dark Fiber
@@ -155,9 +77,6 @@ void testfoo(){
     cursor_y=y;
  }
 
- void asm_cursor(){
- 	cursor();
- }
 
 unsigned char* get_vdcursor(){
 	return currentVideo;
