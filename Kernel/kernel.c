@@ -127,7 +127,7 @@ int main()
 	//ncClear();
 	//console();
 	printChar('a');
-	clear();
+	//clear();
 	initialize_cursor();
 	while(1);
 

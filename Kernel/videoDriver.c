@@ -3,6 +3,7 @@
 
 #include "keyboardDriver.h"
 #include "interruptions.h"
+#include <naiveConsole.h>
 
 
 static unsigned int  bufferLength= 20; // arbitrario
@@ -131,7 +132,7 @@ void testfoo(){
  	int x=cursor_x+col;
  	int y=cursor_y+row;
  	if(x>width*2){
- 		x=160;
+ 		x=80;
  	}
  	if(y>height){
  		y=25;
@@ -158,3 +159,30 @@ void testfoo(){
  	cursor();
  }
 
+unsigned char* get_vdcursor(){
+	return currentVideo;
+}
+
+void set_vdcursor(unsigned char* ptr){
+	currentVideo=ptr;
+}
+
+void backspace(){
+	currentVideo=currentVideo-2;
+	printChar(' ');
+	currentVideo=currentVideo-2;
+	return;
+}
+
+void newline(){
+
+	do{
+		printChar(' ');
+	}while( ((currentVideo-video) % (width*2)) != 0 );
+	unsigned char* aux=currentVideo;
+	do{
+		printChar(' ');
+	}while( ((currentVideo-video) % (width*2)) != 0 );
+	currentVideo=aux;
+	return;
+}

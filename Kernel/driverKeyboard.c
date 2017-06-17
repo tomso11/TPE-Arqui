@@ -1,6 +1,7 @@
 #include <interruptions.h>
 #include <driverVideo.h>
 #include <driverKeyboard.h>
+#include <naiveConsole.h>
 
 #define ROWS 25
 #define COLS 80
@@ -25,18 +26,31 @@ static char buffer[ROWS*COLS] = {0};
 
 void keyboard_handler(void) {
 	int keycode;
-
 	keycode = get_key();
 
 	buffer[bufferPlace] = keycode;
+	// set_nccursor(get_vdcursor());
+	// ncPrintHex(keycode);
+	// ncPrintChar(' ');
+	// set_vdcursor(get_nccursor());
+
+	if(keycode == 0x2A || keycode == 0x36 || (keycode == 0x3A && mayus == 0) ){ 
+		mayus =!mayus;
+		return;
+	}
+	if(keycode == 0xAA || keycode == 0xB6 || (keycode == 0x3A && mayus == 1) ){
+		mayus =!mayus;
+		return;
+	}
 
 	if(keycode >= 0 &&  keycode < MAX_KEYPRESSED) {
+
 		switch(keycode) {
 			case 14:
-				if(buffer[bufferPlace-1] == 28) {
-					//backspace(1);
-				}
-				//backspace(0);
+				// if(buffer[bufferPlace-1] == 28) {
+				// 	backspace(1);
+				// }
+				backspace();
 				bufferPlace--;
 				break;
 			case 15:
@@ -44,16 +58,8 @@ void keyboard_handler(void) {
 				bufferPlace++;
 				break;
 			case 28:
-				insertLine();
-				bufferPlace++;
-				break;
-			case 29:
-			case 42:
-				if(mayus) {
-					mayus = 0;
-				} else {
-					mayus = 1;
-				}
+			case 224:
+				newline();
 				bufferPlace++;
 				break;
 			default:

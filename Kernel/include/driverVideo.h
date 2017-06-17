@@ -8,13 +8,12 @@ void printChar(char c);
 void printString(char* string);
 void clear();
 void insertLine();
-void welcomeMessage();
-void shell();
-void displayTime();
-int _sysTime(int date);
 void backspace(void);
 void scroll(void);
-void console();
 void testfoo(void);
+unsigned char* get_vdcursor(void);
+void set_vdcursor(unsigned char*);
+void backspace();
+void newline();
 
 #endif
