@@ -1,7 +1,7 @@
 // recordemos que la pantalla enrealidad es una matriz de 160x25 guardados en espacios contiguos de memoria
 // en realidad utilizamos solo 80 y nos movemos de a dos ya que el segundo byte es para el formato (color y bg color)
 
-#include "keyboardDriver.h"
+#include "driverKeyboard.h"
 #include "interruptions.h"
 #include <naiveConsole.h>
 
@@ -30,7 +30,12 @@ void initialize_cursor(){
 
 
 void printChar(char character){
-	
+	if( currentVideo == video+4000 ){
+		scroll();
+	}
+	if( (currentVideo!=video) && ((currentVideo-video) % (width*2) == 0) ){
+		newline();
+	}
 	*currentVideo = character;
 	currentVideo += 2;
 
@@ -88,20 +93,37 @@ void set_vdcursor(unsigned char* ptr){
 
 void backspace(){
 	currentVideo=currentVideo-2;
-	printChar(' ');
-	currentVideo=currentVideo-2;
+	*currentVideo=' ';
 	return;
 }
 
 void newline(){
 
-	do{
-		printChar(' ');
-	}while( ((currentVideo-video) % (width*2)) != 0 );
+	while( ((currentVideo-video) % (width*2)) != 0 ){
+		*currentVideo=' ';
+		currentVideo=currentVideo+2;
+	}
+	if( currentVideo == video+4000 ){
+		scroll();
+	}
 	unsigned char* aux=currentVideo;
+
 	do{
-		printChar(' ');
+		*currentVideo=' ';
+		currentVideo=currentVideo+2;
 	}while( ((currentVideo-video) % (width*2)) != 0 );
 	currentVideo=aux;
 	return;
+}
+
+void scroll(){
+	unsigned char * act= video;
+	unsigned char * flwing= act+80;
+	int i;
+	for(i=80 ; i<4000; i++){
+		act[(i-80)]=flwing[i];
+	}
+	currentVideo=act+4000-160;
+	return;
+
 }

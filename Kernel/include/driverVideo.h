@@ -11,5 +11,6 @@ unsigned char* get_vdcursor(void);
 void set_vdcursor(unsigned char*);
 void backspace();
 void newline();
+void scroll();
 
 #endif
