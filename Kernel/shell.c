@@ -23,7 +23,6 @@ void terminal(void) {
 		}
 
 
-		while(1);
 	} while(!exit);
 	return !exit;
 }

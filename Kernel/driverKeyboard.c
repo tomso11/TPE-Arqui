@@ -26,6 +26,7 @@ static char buffer[ROWS*COLS] = {0};
 
 void keyboard_handler(void) {
 	int keycode;
+	int tab;
 	keycode = get_key();
 
 	buffer[bufferPlace] = keycode;
@@ -51,8 +52,9 @@ void keyboard_handler(void) {
 				bufferPlace--;
 				break;
 			case 15:
-				printString("    ");
-				bufferPlace++;
+				for(tab=0; tab<8; tab++){
+					buffer[bufferPlace++]=' ';
+				}
 				break;
 			case 28:
 			case 224:
@@ -61,10 +63,12 @@ void keyboard_handler(void) {
 				break;
 			default:
 				if(mayus) {
-					printChar(SHIFT_KEYS_MAPPING[keycode]);
+					buffer[bufferPlace]=SHIFT_KEYS_MAPPING[keycode];
+					
 				} else {
-					printChar(KEYS_MAPPING[keycode]);
+					buffer[bufferPlace]=KEYS_MAPPING[keycode];
 				}
+				printChar(buffer[bufferPlace]);
 				bufferPlace++;
 				break;
 		}
