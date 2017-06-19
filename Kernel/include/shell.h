@@ -1,15 +1,31 @@
-#ifndef _TERMINAL_H_
-#define _TERMINAL_H_
+#ifndef _SHELL_H_
+#define _SHELL_H_
 
-void terminal(void);
-char* input_line(void);
-int process_start(char*);
-int process_executing(int);
-int process_waiting_input(void);
-void process_send_input(int, char*);
-int process_waiting_output(void);
-char* process_get_output();
-void output_line();
-void end();
+
+#define BUFF_SIZE 256
+#define OK 0
+#define NOT_EXIST 1
+#define ERROR_ARGS 2
+
+typedef struct {
+	char * command;  /* Nombre del comando */
+	char** args;
+	int args_num;
+} command_t;
+
+#include <stdio.h>
+#include <stdint.h>
+
+int shell();
+
+static int interpret(const char * buffer, char * command);
+
+static void printErrorMsg(int error);
+
+/* come espacios y aplica los backspace */
+static void cleanBuffer(char* buffer);
+
+/* Toma el input y separa el comando y los argumentos .*/
+static command_t parseCmd( const char * buffer );
 
 #endif

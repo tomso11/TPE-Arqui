@@ -19,8 +19,10 @@ void ncPrint(const char * string)
 
 void ncPrintChar(char character)
 {
+	set_nccursor(get_vdcursor());
 	*currentVideo = character;
 	currentVideo += 2;
+	set_vdcursor(get_nccursor());
 }
 
 void ncNewline()

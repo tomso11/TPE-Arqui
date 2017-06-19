@@ -1,14 +1,12 @@
 #include <stdint.h>
-#include <string.h>
-#include <lib.h>
 #include <moduleLoader.h>
 #include <naiveConsole.h>
 
 #include <driverVideo.h>
-#include <keyboardDriver.h>
 #include <interruptions.h>
 #include <driverKeyboard.h>
 #include <mouseDriver.h>
+#include <shell.h>
 
 extern uint8_t text;
 extern uint8_t rodata;
@@ -123,12 +121,9 @@ int main()
 	setPicSlave(0x0);
 	sti();
 
-	ncPrint("hola");
-	//ncClear();
-	//console();
-	printChar('a');
-	//clear();
 	initialize_cursor();
+	clear();
+	shell();
 	while(1);
 
 	return 0;

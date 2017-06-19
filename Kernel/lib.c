@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include <ctype.h>
 
 void * memset(void * destination, int32_t c, uint64_t length)
 {
@@ -47,4 +48,77 @@ void * memcpy(void * destination, const void * source, uint64_t length)
 	}
 
 	return destination;
+}
+
+void * malloc (int size) {
+	return (void *) res(size); // res es un syscall 
+}
+
+
+void free(void * ptr){
+	return;
+}
+
+
+/* A partir de un string retorna su valor entero */
+int atoi(const char *str) {
+	while (isspace(*str))
+		str++;
+
+	int num = 0;
+	int sign = 1;
+	if (*str == '-') {
+		str++;
+		sign = -1;
+	}
+	else if (*str == '+')
+		str++;
+
+	while (*str != '\0' && isdigit(*str)) {
+		num = num * 10 + (*str) - '0';
+		str++;
+	}
+
+	return num * sign;
+}
+
+/* Copia en str los valores ascii de los digitos de value en la base indicada.
+** Devuelve la cantidad de digitos copiados. */
+int itoa(int value, char *str, int base) {
+	char *s = str;
+	char *s1, *s2;
+	int length = 0;
+
+	if(value < 0 && base == 10) {
+		value = -value;
+		length++;
+		*s++ = '-';
+		str++;
+	}
+
+	//Calculate characters for each digit
+	do
+	{
+		int rest = value % base;
+		*s++ = (rest < 10) ? rest + '0' : rest + 'A' - 10;
+		length++;
+	}
+	while (value /= base);
+
+	// Terminate string in str.
+	*s = '\0';
+
+	//Reverse string in str.
+	s1 = str;
+	s2 = s - 1;
+	while (s1 < s2)
+	{
+		char tmp = *s1;
+		*s1 = *s2;
+		*s2 = tmp;
+		s1++;
+		s2--;
+	}
+
+	return length;
 }

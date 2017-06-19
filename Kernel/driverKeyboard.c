@@ -22,6 +22,7 @@ static char SHIFT_KEYS_MAPPING[] = {0, 'ESC', '!', '\0', '#', '$', '%', '&', '/'
 
 static int mayus = 0;
 static int bufferPlace = 0;
+static int polledPlace = 0;
 static char buffer[ROWS*COLS] = {0};
 
 void keyboard_handler(void) {
@@ -45,11 +46,11 @@ void keyboard_handler(void) {
 	}
 
 	if(keycode >= 0 &&  keycode < MAX_KEYPRESSED) {
-
 		switch(keycode) {
 			case 14:
-				backspace();
-				bufferPlace--;
+				//backspace();
+				buffer[bufferPlace]='/b'; //manejar backspace
+				bufferPlace++;
 				break;
 			case 15:
 				for(tab=0; tab<8; tab++){
@@ -58,7 +59,8 @@ void keyboard_handler(void) {
 				break;
 			case 28:
 			case 224:
-				newline();
+				//newline();
+				buffer[bufferPlace]='/n'; //manejar newline
 				bufferPlace++;
 				break;
 			default:
@@ -68,9 +70,20 @@ void keyboard_handler(void) {
 				} else {
 					buffer[bufferPlace]=KEYS_MAPPING[keycode];
 				}
-				printChar(buffer[bufferPlace]);
+				//printChar(buffer[bufferPlace]);
 				bufferPlace++;
 				break;
 		}
 	}
+}
+
+/* Permite extraer un caracter del buffer, si esta vacio, retornara un codigo de error. */
+char poll_keyboard_buffer(){
+	printString("this guys is a poll");
+	if(polledPlace==bufferPlace){
+		return '\0';
+	}
+
+	return buffer[polledPlace++];
+
 }

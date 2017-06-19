@@ -36,6 +36,12 @@ void printChar(char character){
 	if( (currentVideo!=video) && ((currentVideo-video) % (width*2) == 0) ){
 		newline();
 	}
+	if (character == '\b'){
+		backspace();
+	}
+	if( character == '\n'){
+		newline();
+	}
 	*currentVideo = character;
 	currentVideo += 2;
 
@@ -92,6 +98,9 @@ void set_vdcursor(unsigned char* ptr){
 }
 
 void backspace(){
+	if(currentVideo == video){
+		return;
+	}
 	currentVideo=currentVideo-2;
 	*currentVideo=' ';
 	return;
