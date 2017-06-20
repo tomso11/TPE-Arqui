@@ -29,7 +29,6 @@ void keyboard_handler(void) {
 	int keycode;
 	int tab;
 	keycode = get_key();
-
 	buffer[bufferPlace] = keycode;
 	// set_nccursor(get_vdcursor());
 	// ncPrintHex(keycode);
@@ -79,7 +78,6 @@ void keyboard_handler(void) {
 
 /* Permite extraer un caracter del buffer, si esta vacio, retornara un codigo de error. */
 char poll_keyboard_buffer(){
-	printString("this guys is a poll");
 	if(polledPlace==bufferPlace){
 		return '\0';
 	}

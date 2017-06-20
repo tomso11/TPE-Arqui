@@ -26,12 +26,15 @@ int shell(){
 	while(loop ){
 		printString("THE PROMPTs");
 		printf("%s", "[User@gatOS]$  ");
-		while ( c=getchar() != '\n'){
+		while ( c=getchar() != '\n' || c != -1){
 			if(i == BUFF_SIZE){
 				i = 0;
 			}
 			buff[i++]=c;
-			putchar(c);
+			// ncPrintDec(c);
+			// ncPrintChar(' ');
+			// putchar(c);
+			// putchar(c);
 		}
 		printString("does it stop");
 		putchar('\n');

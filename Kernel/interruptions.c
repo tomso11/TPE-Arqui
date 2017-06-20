@@ -1,9 +1,9 @@
 #include <interruptions.h>
 #include <driverVideo.h>
-#include <keyboardDriver.h>
 #include <driverKeyboard.h>
 #include <mouseDriver.h>
 #include <naiveConsole.h>
+#include <systemCalls.h>
 
 
 static int i = 0;
@@ -60,9 +60,17 @@ void mouseHandler(){
 	mouse_handle();
 
 }
-
-void syscallHandler(){
-
+int co=0;
+void syscallHandler(uint64_t rax, uint64_t rbx, uint64_t rcx, uint64_t rdx){
+	
+	// if( co==0){
+	// ncPrintDec(rax);
+	// ncPrintDec(rbx);
+	// ncPrintDec(rcx);
+	// ncPrintDec(rdx);
+	syscallDispatcher(rax,rbx,rcx,rdx);
+	// co++;
+	// }
 }
 
 

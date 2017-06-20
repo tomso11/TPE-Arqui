@@ -45,19 +45,22 @@ uint64_t syscallDispatcher(uint64_t rax, uint64_t rbx, uint64_t rdx, uint64_t rc
 uint64_t sys_read(uint64_t fds, char * buffer, uint64_t bytes) {
 	unsigned int i = 0;
 	char c;
+	int block=-1;
     if (fds == STDIN) {
-		c = poll_keyboard_buffer();
-		if (c != '\0') {
-			buffer[i++] = c;
-		} 
-		else{
-			return i;
-		}
+			c = poll_keyboard_buffer();
+			if (c != '\0') {
+				*buffer = c;
+				block=0;
+			} 
+			else{
+				block= -1;
+			}
+
 		// else {
 		// 	_hlt(); <--- en asm
 		// }
     }
-    return i;
+    return block;
 }
 
 /* SystemCall de Write para escribir a salida estándar */

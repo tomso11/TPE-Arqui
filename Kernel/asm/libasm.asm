@@ -118,6 +118,16 @@ cpuVendor:
 	pop rbp
 	ret
 
+;_syscallHandler:
+;	pushaq
+;	mov rdi,rax ; primer parametro
+;	mov rsi,rbx ; segundo parametro
+;	call syscallDispatcher ; en rdx y rcx ya se encuentran los correspondientes valores
+;	mov [aux], rax
+;	popaq
+;	mov rax, [aux]
+;	iret
+
 ; Set cursor position (text mode 80x25)
 ; @param BL The row on screen, starts from 0
 ; @param BH The column on screen, starts from 0

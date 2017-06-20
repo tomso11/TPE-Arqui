@@ -135,12 +135,17 @@ int readRowAndClear(char *str, unsigned int maxlen) {
 
 /*Lee del buffer hasta '\n' caso en el cual lo marca como vacio. Si esta vacio el buffer lo llena.*/
 int getchar() {
+	unsigned char c;
+	read(STDIN, &c, 1);
+	if(c=='\0'){
+		return -1;
+	}
 	
-	if (index == 0) // buffer vacio
-		buffil();
-    unsigned char c = buff[index++]; // Se lee caracter del buffer
-    if (c == '\n' || index== BUFF_SIZE)
-    	index = 0;  // reset buffer
+	// if (index == 0) // buffer vacio
+	// 	buffil();
+ //    unsigned char c = buff[index++]; // Se lee caracter del buffer
+ //    if (c == '\n' || index== BUFF_SIZE)
+ //    	index = 0;  // reset buffer
     return c;
 }
 
