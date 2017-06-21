@@ -30,6 +30,9 @@ void putchar(int c) {
 	fputchar(STDOUT, c);
 }
 
+void putstring(char * str){
+	prints(STDOUT,str);
+}
 
 int printf(const char *format, ...) {
 	va_list args;
@@ -104,7 +107,7 @@ static int prints(unsigned int fds, const char *str) {
 int readRow(char *str, unsigned int maxlen) {
     unsigned int i;
     int c;
-    for (i = 0; i < maxlen-1 && (c = getchar()) != '\n'; i++) 
+    for (i = 0; i < maxlen-1 && (c = getchar(str)) != '\n'; i++) 
 			str[i] = c;
     str[i] = '\0';
     return i;
@@ -115,7 +118,7 @@ int readRowAndClear(char *str, unsigned int maxlen) {
 	unsigned int i = 0;
 	int c;
 	char state = SPACE;
-	while ((c = getchar()) != '\n' && i < maxlen-1) {
+	while ((c = getchar(str)) != '\n' && i < maxlen-1) {
 		if (state != SPACE) {
 			str[i++] = c;
 			if (isspace(c))
@@ -132,10 +135,25 @@ int readRowAndClear(char *str, unsigned int maxlen) {
 	return i;
 }
 
+int super_getchar(){
+	char * getch;
+	*getch=0;
+	while (*getch == 0){
+		read(STDIN, getch, 1);
+	}
+	if(*getch == '\b' || *getch == '\n'){
+		printString("bro");
+	}
+	else{
+	printChar(*getch);
+	}	
+	return (int)(unsigned char)*getch;
+}
+
 
 /*Lee del buffer hasta '\n' caso en el cual lo marca como vacio. Si esta vacio el buffer lo llena.*/
-int getchar() {
-	unsigned char * getch;
+ char getchar(char * buff) {
+	 char * getch;
 	*getch=0;
 	while (*getch == 0){
 		read(STDIN, getch, 1);
@@ -144,7 +162,7 @@ int getchar() {
 	if(*getch=='\0'){
 		return -1;
 	}
-
+	*(buff)=*getch;
 	
 	// if (index == 0) // buffer vacio
 	// 	buffil();

@@ -68,7 +68,7 @@ uint64_t sys_write(uint64_t fds, const char * str, uint64_t length) {
 		printString(str);
 	} 
 	else if (fds == STDOUT) {
-		printChar(str);
+		printChar(*str);
 	}
 	return 0;
 }

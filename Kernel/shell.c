@@ -15,6 +15,7 @@ int shell(){
 
 	int i=0;
 	char c;
+	int s;
 	command_t cmd;
 	
 
@@ -25,16 +26,22 @@ int shell(){
 	
 	while(loop ){
 		printString("THE PROMPTs");
-		printf("%s", "[User@gatOS]$  ");
-		while ( c=getchar() != '\n'){
-			//printChar(c);
+		putstring("[User@gatOS]$  ");
+
+		//printf("%s", "[User@gatOS]$  ");
+		//while ( (getchar( (buff+i) )) != '\n'){
+		while( (s=super_getchar()) != '\n' ){
+			//printChar(( char)s);
 			if(i == BUFF_SIZE){
 				i = 0;
 			}
-			if( c != -1 ){
-				buff[i++]=(char)c;
+			//buff[i]=s;
+			putchar(s);
+			i++;
 				if(i > 0)
-					printChar(buff[i-1]);
+					//printChar(buff[i-1]);
+			
+			if( c != -1 ){
 			}
 			// ncPrintDec(c);
 			// ncPrintChar(' ');

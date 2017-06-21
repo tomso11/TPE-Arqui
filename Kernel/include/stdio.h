@@ -15,9 +15,12 @@
 
 #include <stdarg.h>
 
+int super_getchar();
+void putstring(char * str);
+
 void fputchar(unsigned int fds, int c);
 void putchar(int c);
-int getchar();
+ char getchar(char * buff);
 int printf(const char *format, ...);
 int fprintf(unsigned int fds, const char *format, ...);
 static int fprinttype(unsigned int fds, const char *format, va_list args);

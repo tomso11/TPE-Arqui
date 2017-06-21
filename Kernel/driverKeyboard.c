@@ -48,7 +48,7 @@ void keyboard_handler(void) {
 		switch(keycode) {
 			case 14:
 				//backspace();
-				buffer[bufferPlace]='/b'; //manejar backspace
+				buffer[bufferPlace]='\b'; //manejar backspace
 				bufferPlace++;
 				break;
 			case 15:
@@ -59,7 +59,7 @@ void keyboard_handler(void) {
 			case 28:
 			case 224:
 				//newline();
-				buffer[bufferPlace]='/n'; //manejar newline
+				buffer[bufferPlace]='\n'; //manejar newline
 				bufferPlace++;
 				break;
 			default:
