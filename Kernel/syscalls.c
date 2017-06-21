@@ -1,10 +1,12 @@
 #include "syscalls.h"
 #include "driverVideo.h" //debug
+
 /* SystemCall Read */
 int read(unsigned int fd, char *buff, unsigned int bytes) {
      int i;
-     i=_int80h(3, fd, (uint64_t) buff, bytes);
-     printChar(*buff);
+     readC(buff,bytes);
+     //i=_int80h(3, fd, (uint64_t) buff, bytes);
+     //printChar(*buff);
      return i;
 
 

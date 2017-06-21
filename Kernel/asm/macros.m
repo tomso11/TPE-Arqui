@@ -43,7 +43,7 @@
 	
 	mov al, 20h ; EOI
 	out 20h, al
-	
+
 	popaq
 	iretq
 %endmacro

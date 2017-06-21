@@ -9,6 +9,13 @@ GLOBAL irq80Handler
 GLOBAL read_port
 GLOBAL write_port
 GLOBAL keyboard
+GLOBAL sys_callHandler
+EXTERN sys_write
+EXTERN sys_read
+EXTERN sys_clear
+;EXTERN sys_call_echoC
+;EXTERN sys_call_runC
+GLOBAL cli
 
 GLOBAL set_cursor
 GLOBAL cursor
@@ -29,7 +36,7 @@ irq12Handler:
 	irqSlaveHandler 2
 
 irq80Handler:
-	irqHandler 3
+	jp sys_callHandler
 
 cursor:
 	pushaq
@@ -48,9 +55,12 @@ cursor:
 	popaq
 	ret
 
-
 sti:
 	sti
+	ret
+
+cli:
+	cli
 	ret
 	
 setPicMaster:
@@ -118,15 +128,45 @@ cpuVendor:
 	pop rbp
 	ret
 
-;_syscallHandler:
-;	pushaq
-;	mov rdi,rax ; primer parametro
-;	mov rsi,rbx ; segundo parametro
-;	call syscallDispatcher ; en rdx y rcx ya se encuentran los correspondientes valores
-;	mov [aux], rax
-;	popaq
-;	mov rax, [aux]
-;	iret
+sys_callHandler:
+	cli
+	push rbp
+	mov rbp, rsp
+	cmp eax, 3
+	mov rdi,rbx
+	mov rsi,rcx
+	mov rdx,rdx
+	jne write
+	call sys_read
+	jp finish
+write:
+	cmp eax,4
+	jne clear
+	call sys_write
+clear:
+	cmp eax,5
+	jne finish
+	call sys_clear
+;echo:
+;	cmp eax,6
+;	jne run
+;	mov rdi,rcx
+;	call sys_call_echoC
+;run:
+;	cmp eax, 7
+;	jne finish
+;	mov rdi,rcx
+;	call sys_call_runC
+finish:
+	mov rdi,rax
+	mov al, 20h
+	out 20h, al
+	mov rax,rdi	
+	mov rsp, rbp
+	pop rbp
+	sti
+	iretq
+
 
 ; Set cursor position (text mode 80x25)
 ; @param BL The row on screen, starts from 0

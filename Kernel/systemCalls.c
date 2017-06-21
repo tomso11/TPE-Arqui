@@ -46,10 +46,10 @@ uint64_t sys_read(uint64_t fds, char * buffer, uint64_t bytes) {
 	unsigned int i = 0;
 	char c;
 	int block=-1;
-    if (fds == STDIN) {
-			c = poll_keyboard_buffer();
+			c = poll_keyboard_buffer(buffer,bytes);
 			if (c != '\0') {
-				*buffer = c;
+				//*buffer = c;
+				//printChar(*buffer);
 				block=0;
 			} 
 			else{
@@ -59,7 +59,6 @@ uint64_t sys_read(uint64_t fds, char * buffer, uint64_t bytes) {
 		// else {
 		// 	_hlt(); <--- en asm
 		// }
-    }
     return block;
 }
 

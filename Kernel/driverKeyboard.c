@@ -77,11 +77,17 @@ void keyboard_handler(void) {
 }
 
 /* Permite extraer un caracter del buffer, si esta vacio, retornara un codigo de error. */
-char poll_keyboard_buffer(){
-	if(polledPlace==bufferPlace){
-		return '\0';
+char poll_keyboard_buffer(char * buff, int bytes){
+	cli();
+
+	if(bytes == 1){
+			
+		if(polledPlace==bufferPlace){
+			sti();
+			return '\0';
+		}
+		sti();
+		*buff=buffer[polledPlace];
+		return buffer[polledPlace++];
 	}
-
-	return buffer[polledPlace++];
-
 }
