@@ -30,5 +30,6 @@ int readRow(char *str, unsigned int maxlen);
 int readRowAndClear(char *str, unsigned int maxlen);
 int scanf(const char *format, ...);
 static void buffil();
+void* my_malloc (int size);
 
 #endif

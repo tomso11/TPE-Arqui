@@ -23,10 +23,10 @@ int shell(){
 	//load en pantalla ?
 	//
 
-	
+	/*PUT STRING HACE EXPLOTAR TODOOOOO*/
 	while(loop ){
-		printString("THE PROMPTs");
-		putstring("[User@gatOS]$  ");
+		//putstring("[User@gatOS]$  ");
+		putchar('>');
 
 		//printf("%s", "[User@gatOS]$  ");
 		//while ( (getchar( (buff+i) )) != '\n'){
@@ -36,7 +36,8 @@ int shell(){
 				i = 0;
 			}
 			//buff[i]=s;
-			putchar(s);
+			printChar(s);
+			//putchar(s);
 			i++;
 				if(i > 0)
 					//printChar(buff[i-1]);
@@ -48,7 +49,7 @@ int shell(){
 			// putchar(c);
 			// putchar(c);
 		}
-		printString("does it stop");
+		//printString("does it stop");
 		putchar('\n');
 		cleanBuffer(buff);
 		cmd = parseCmd(buff);
@@ -83,10 +84,12 @@ static int interpret(const char * buffer, char * command){
 static void printErrorMsg(int error){
 	switch(error){
 		case ERROR_ARGS:
-			printf("%s", "Invalid arguments \n");
+			//printf("%s", "Invalid arguments \n");
+			putstring("Invalid args \n");
 			break;
 		case NOT_EXIST:
-			printf("%s", "Command does not exist" );
+			//printf("%s", "Command does not exist" );
+			putstring("Command does not exist\n");
 			break;
 	}
 

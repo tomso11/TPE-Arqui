@@ -12,5 +12,10 @@ void set_vdcursor(unsigned char*);
 void backspace();
 void newline();
 void scroll();
+void selection(int finit, int cinit, int ffin, int cfin);
+void undoSelection(int finit, int cinit, int ffin, int cfin);
+void drawMouse(int f, int c);
+void udrawMouse(int f, int c);
+int validPosition(int f, int c);
 
 #endif

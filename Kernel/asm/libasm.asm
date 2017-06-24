@@ -16,6 +16,7 @@ EXTERN sys_clear
 ;EXTERN sys_call_echoC
 ;EXTERN sys_call_runC
 GLOBAL cli
+GLOBAL saveCR3
 
 GLOBAL set_cursor
 GLOBAL cursor
@@ -126,6 +127,12 @@ cpuVendor:
 
 	mov rsp, rbp
 	pop rbp
+	ret
+
+saveCR3:
+
+	mov rax, cr3
+	mov cr3, rax
 	ret
 
 sys_callHandler:

@@ -38,9 +38,11 @@ void printChar(char character){
 	}
 	if (character == '\b'){
 		backspace();
+		return;
 	}
 	if( character == '\n'){
 		newline();
+		return;
 	}
 	*currentVideo = character;
 	currentVideo += 2;
@@ -88,6 +90,40 @@ void clear(){
     cursor_y=y;
  }
 
+void selection(int finit, int cinit, int ffin, int cfin){
+ 
+	int i= finit*width+ cinit;
+	int fin= ffin*width+cfin;
+	while(validPosition(i/width,i%width) && i<=fin ){
+		
+		drawMouse(i/width,i%width);
+		i++;
+	}
+}
+
+void undoSelection(int finit, int cinit, int ffin, int cfin){
+	int i= finit*width+ cinit;
+	int fin= ffin*width+cfin;
+	while(validPosition(i/width,i%width) && i<=fin ){
+		
+		udrawMouse(i/width,i%width);
+		i++;
+	}
+
+} 
+
+void drawMouse(int f, int c){
+	if(!validPosition(f,c)) return;
+	*(video+(c*width*2)+(f*width*2*height)+1)=(char) 0x30;
+}
+void udrawMouse(int f, int c){
+	if(!validPosition(f,c)) return;
+	*(video+(c*width*2)+(f*width*2*height)+1)=(char) 0x0F; // fondo negro con blanco como texto
+}
+
+int validPosition(int f, int c){
+	return (f>=width || c>=width || f<0 || c<0)? 0:1;
+}
 
 unsigned char* get_vdcursor(){
 	return currentVideo;
@@ -108,11 +144,11 @@ void backspace(){
 
 void newline(){
 
-	while( ((currentVideo-video) % (width*2)) != 0 ){
+	while( ((currentVideo-video) % (width*2)) != 0 ){ // limpia la linea actual hasta llegar al final de linea
 		*currentVideo=' ';
 		currentVideo=currentVideo+2;
 	}
-	if( currentVideo == video+4000 ){
+	if( currentVideo == video+4000 ){ // si llegamos a final de pantalla hacemos scroll
 		scroll();
 	}
 	unsigned char* aux=currentVideo;
@@ -120,7 +156,7 @@ void newline(){
 	do{
 		*currentVideo=' ';
 		currentVideo=currentVideo+2;
-	}while( ((currentVideo-video) % (width*2)) != 0 );
+	}while( ((currentVideo-video) % (width*2)) != 0 ); //limpiamos la linea siguiente
 	currentVideo=aux;
 	return;
 }

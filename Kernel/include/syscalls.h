@@ -5,7 +5,7 @@
 
 uint64_t _int80h(uint64_t rax, uint64_t rbx, uint64_t rcx, uint64_t rdx);
 
-int readC(char * buffer, int size);
+int readC(char * buffer, int size); //en stdio.asm
 void writeC(char * msg, int size);
 
 

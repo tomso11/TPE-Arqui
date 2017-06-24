@@ -1,6 +1,6 @@
 #include <interruptions.h>
 #include <driverVideo.h>
-#include <keyboardDriver.h>
+#include <driverKeyboard.h>
 #include "mouseDriver.h"
 
 int dx;
@@ -150,6 +150,15 @@ void mouse_Handler()
 uint8_t mouse_cycle = 0;
 int8_t  mouse_byte[3];
 
+static int x=10;
+static int y=10;
+static int xo=0;
+static int yo=0;
+static int xf=0;
+static int yf=0;
+static int select_flag=0;
+
+
 void mouse_handle() {
   uint8_t status = read_port(MOUSE_STATUS);
   while (status & MOUSE_BBIT) {
@@ -179,28 +188,67 @@ void mouse_handle() {
           packet.buttons = 0;
           if (mouse_byte[0] & 0x01) {
             packet.buttons |= LEFT_CLICK;
-          }
-          if (mouse_byte[0] & 0x02) {
-            packet.buttons |= RIGHT_CLICK;
-          }
-          if (mouse_byte[0] & 0x04) {
+            if(select_flag){
+                if( yf<yo || ((yf==yo) && (xf<xo)) ){
+                  undoSelection( yf, xf,yo, xo);
+
+                }else{
+                  undoSelection(yo, xo, yf, xf);
+                }
+                xf=x;
+                yf=y;
+            }else{
+                select_flag=1;
+                xo=x;
+                yo=y;
+                xf=x;
+                yf=y;
+            }
+            if(yf<yo ||( (yf==yo) &&(xf<xo))){ // solo se puede seleccionar hacia la izq y hacia arriba
+                selection( yf, xf,yo, xo);  
+            }else{
+                selection(yo, xo, yf, xf);
+            }}else{
+              if(select_flag){
+                if(yf<yo || ((yf==yo) &&(xf<xo))){
+                  undoSelection( yf, xf,yo, xo);
+                }else{
+                  undoSelection(yo, xo, yf, xf);
+                }
+                select_flag=0;
+                //updateScreen();
+              }
+            }
+            if (mouse_byte[0] & 0x02) {
+              packet.buttons |= RIGHT_CLICK;
+            }
+            if (mouse_byte[0] & 0x04) {
             packet.buttons |= MIDDLE_CLICK;
-          }
-          if (!(mouse_byte[0] & 0x20))
+            }
+            if (!(mouse_byte[0] & 0x20))
               packet.y_difference |= 0xFFFFFF00; //delta-y is a negative value
-          if (!(mouse_byte[0] & 0x10))
+            if (!(mouse_byte[0] & 0x10))
               packet.x_difference |= 0xFFFFFF00; //delta-x is a negative value
-          mouse_packet_handler(packet);
-          mouse_cycle = 0;
+            mouse_packet_handler(packet);
+
+            // //udrawMouse(y,x);
+            // if(x+packet.x_difference/10 < 80 && x+packet.x_difference/10>=0)
+            //   x+=packet.x_difference/10;
+            // if(y-packet.y_difference/10 < 25 && y-packet.y_difference/10>=0)
+            //   y-=packet.y_difference/10;
+            // //drawMouse(y,x);
+            // update_cursor(x,y);
+            mouse_cycle = 0;
+        }
       }
-    }
+    
     
     status = read_port(MOUSE_STATUS);
   }
 }
 
 void mouse_packet_handler(mouse_device_packet_t packet){
-  update_cursor(packet.y_difference/125, packet.x_difference/125);
+  update_cursor(packet.x_difference/120,packet.y_difference/120);
   if(packet.buttons == LEFT_CLICK){
     printString("Left Button");
   }
