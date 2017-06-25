@@ -18,6 +18,12 @@ typedef struct {
 
 int shell();
 
+static void bufferClean( char* buffer);
+
+static void space_eater(char* buffer);
+
+static command_t parser(const char*buffer);
+
 static int interpret(const char * buffer, char * command);
 
 static void printErrorMsg(int error);

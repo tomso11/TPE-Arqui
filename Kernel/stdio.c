@@ -34,6 +34,7 @@ void putchar(int c) {
 }
 
 void putstring(char * str){
+	
 	prints(STDOUT,str);
 }
 

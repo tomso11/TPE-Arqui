@@ -35,7 +35,7 @@ int shell(){
 			if(i == BUFF_SIZE){
 				i = 0;
 			}
-			//buff[i]=s;
+			buff[i]=s;
 			printChar(s);
 			//putchar(s);
 			i++;
@@ -49,12 +49,30 @@ int shell(){
 			// putchar(c);
 			// putchar(c);
 		}
+		buff[i]='\0';
 		//printString("does it stop");
-		putchar('\n');
-		cleanBuffer(buff);
-		cmd = parseCmd(buff);
-		error = execute_cmd(cmd);
-		printErrorMsg(error);
+
+
+		// putchar('\n');
+		
+		// printString(cmd.command);
+		// error = execute_cmd(cmd);
+		// printErrorMsg(error);
+		// buff[0]='\0'; //reinicio el buffer
+		// i=0;
+
+		space_eater(buff);
+		//cmd = parseCmd(buff);
+		cmd=parser(buff);
+		printChar('\n'); // SUPER DEBUGGING BLOCK
+		printString(buff);
+		printChar('\n');
+		printString(cmd.command);
+		printChar('\n');
+		bufferClean(buff);
+		i=0;
+
+
 	}
 	// while(loop){
 	// 	printString("[User@gatOS]$ ");
@@ -71,6 +89,8 @@ int shell(){
 
 	return 0;
 }
+
+/*DEPRECATED*/
 
 static int interpret(const char * buffer, char * command){
 	int i;
@@ -95,6 +115,7 @@ static void printErrorMsg(int error){
 
 }
 
+/*DEPRECATED*/
 /* come espacios y aplica los backspace */
 static void cleanBuffer(char* buffer){
 	int i;
@@ -126,7 +147,7 @@ static command_t parseCmd( const char * buffer ){
 	command_t cmd;
 	for ( i=0; buffer[i] != '\0'; i++ ){ //copia el command
 		if(buffer[i] == ' '){ //separa cmd de args
-			i++;
+			i++; //salteo el espacio
 			while(buffer[i] != '\0'){ //copia los args
 				if(buffer [i] == ' '){ //separa los args
 					cmd.args[n][j]='\0';
@@ -135,13 +156,49 @@ static command_t parseCmd( const char * buffer ){
 				}
 				cmd.args[n][j++]=buffer[i++];
 			}
+			cmd.args[n][j]=buffer[i];
 		}
 		cmd.command[i]=buffer[i];
 		if(cmd.command[i] == '\0'){ //puede que salga del while anidado con un '\0'
 			i--;
 		}
 	}
+	//cmd.command
 	cmd.args_num=n;
 	return cmd;
 }
 
+/*Borra los espacios repetidos (pretends to be shocked)*/
+
+static void space_eater(char* buffer){
+	int j;
+	int aux;
+	for(j=0; buffer[j] != '\0'; j++){
+		if( (buffer[j] == ' ' && buffer[j+1] == ' ') || (buffer[j]== ' ' && j==0) ){
+			for(aux=j; buffer[aux] != '\0'; aux++){
+				buffer[aux]=buffer[aux+1];
+			}
+			j--;
+		}
+	}
+}
+
+/* re implementacion del parser */
+
+static command_t parser(const char* buffer){
+	int n=0;
+	command_t cmd={{0, 0, 0}};
+	for (n = 0; buffer[n] != ' ' && buffer[n] != '\0' ; n++)
+	{
+		cmd.command[n]=buffer[n];
+	}
+	cmd.command[n]=buffer[n];
+	return cmd;
+}
+
+static void bufferClean( char* buffer){
+	int n;
+	for(n=0; buffer[n] != '\0'; n++){
+		buffer[n]='\0';
+	}
+}

@@ -11,7 +11,8 @@ int strncmp(const char *s, const char *t, unsigned int num){
 		if (num==0)
 			return 0;
 		else {
-			return ( *(unsigned char *) s - *(unsigned char*) t);
+			//return ( *(unsigned char *) s - *(unsigned char*) t);
+			return 1;
 		}
 	}
 }
@@ -45,4 +46,17 @@ int str_len(const char *str) {
 	for (i = 0; str[i] != '\0'; i++)
 		;
 	return i;
+}
+
+int comp_str(const char* s, const char *t){
+	int n =0 ;
+	while( s[n]!='\0' && (s[n]==t[n]) ){
+		n++;
+	}
+	if(s[n]){
+		return 0;
+	}
+	else{
+		return 1;
+	}
 }

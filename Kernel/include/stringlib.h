@@ -3,6 +3,7 @@
 
 #include <limits.h>
 
+int comp_str(const char* s, const char *t);
 int strncmp(const char *s, const char *t, unsigned int num);
 int strcmp(const char * s, const char * t);
 int strcpy(char * to, const char * from);
