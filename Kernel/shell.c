@@ -4,6 +4,13 @@
 
 #include "driverVideo.h" //debug
 
+//static int buff_idx=0; //variable para recorrer el buffer que se reinicia en cada loop
+
+typedef struct {
+	char * arg;  /* Nombre del comando */
+	int buff_idx;
+} arg_t;
+
 
 int shell(){
 	int loop=1;
@@ -12,12 +19,25 @@ int shell(){
 	char command[BUFF_SIZE];
 	int hasarguments=0;
 	int error;
-
+	// char ** arguments;
+	// arguments=my_malloc(sizeof(char*)*MAX_ARGS);
+	// for(int j=0; j<MAX_ARGS; j++){
+	// 	arguments[j]=my_malloc(sizeof(char)*MAX_ARG_LEN);
+	// }
+	// ncPrintDec(sizeof(arguments));
+	// ncPrintDec(sizeof(arguments[0]));
+	arg_t arg1;
+	arg_t arg2;
+	arg_t arg3;
 	int i=0;
 	char c;
 	int s;
 	command_t cmd;
-	
+	int continue_parse=0;
+	int argus=0;
+	int x;
+	int* tracker=my_malloc(sizeof(int*));
+	*tracker=0;
 
 	//
 	//load en pantalla ?
@@ -62,15 +82,51 @@ int shell(){
 		// i=0;
 
 		space_eater(buff);
-		//cmd = parseCmd(buff);
-		cmd=parser(buff);
-		printChar('\n'); // SUPER DEBUGGING BLOCK
-		printString(buff);
-		printChar('\n');
-		printString(cmd.command);
-		printChar('\n');
+		(*tracker)=parsero(buff,cmd.command);
+		// arg1.buff_idx=*tracker;
+
+		// for(x=0; x<MAX_ARGS && *tracker != 0; x++){ // DIRTY
+		// 	ncPrintDec(*tracker);
+		// 	if(x==0){
+		// 		arg1.arg=arg_parser(buff, tracker);
+		// 		ncPrintDec(arg1.buff_idx);
+		// 	}
+		// 	if(x==1){
+		// 		arg2.arg=arg_parser(buff, tracker);
+		// 		arg2.buff_idx=*tracker;
+		// 		ncPrintDec(arg2.buff_idx);
+		// 	}
+		// 	if(x==2){
+		// 		arg3.arg=arg_parser(buff, tracker);
+		// 		arg3.buff_idx=*tracker;
+		// 		ncPrintDec(arg3.buff_idx);
+		// 	}
+
+		// }
+
+		// while(continue_parse != 0){
+		// 	printString("continues");
+		// 	continue_parse=parsero(buff,arguments[argus],continue_parse);
+		// 	printString(arguments[argus]);
+		// 	argus++;
+		// }
+
+		//cmd=parser(buff);
+		// printChar('\n'); // SUPER DEBUGGING BLOCK
+		// printString(buff);
+		// printChar('\n');
+		// printString(cmd.command);
+		// printChar('\n');
+		// printString(arg1.arg);
+		// printChar('\n');
+		// printString(arg2.arg);
+		// printChar('\n');
+		// printString(arg3.arg);
+		// printChar('\n');
+		
 		bufferClean(buff);
 		i=0;
+		(*tracker)=0;
 
 
 	}
@@ -188,12 +244,83 @@ static void space_eater(char* buffer){
 static command_t parser(const char* buffer){
 	int n=0;
 	command_t cmd={{0, 0, 0}};
+	command_t aux;
 	for (n = 0; buffer[n] != ' ' && buffer[n] != '\0' ; n++)
 	{
 		cmd.command[n]=buffer[n];
 	}
 	cmd.command[n]=buffer[n];
+	if(buffer[n] == ' '){
+		aux=parse_args(buffer, n);
+		cmd.args=aux.args;
+		cmd.args_num=aux.args_num;
+	}
 	return cmd;
+}
+
+static command_t parse_args(const char* buffer, int n){
+	command_t ans;
+	int arg_num=1;
+	int arg_idx=0;
+	n++; // salteo el espacio con el que llega
+	while(buffer[n] != '\0'){ //hasta terminar el input
+		ans.args=my_malloc((sizeof(char*) * 3)); //agrabdamos cada vez que hay un nuevo argumento
+		ans.args[arg_num-1]=my_malloc(sizeof(char)); // 15 monto arbitrario
+		ncPrintDec(sizeof(ans.args));
+		putchar('\n');
+		ncPrintDec(sizeof(ans.args[0]));
+		putchar('\n');
+		ncPrintDec(sizeof(char*));
+		putchar('\n');
+		ncPrintDec(sizeof(char));
+		for( ; buffer[n] != ' ' || buffer[n] != '\0'; n++){ //copiamos el arg
+			ans.args[arg_num-1][arg_idx++]=buffer[n];
+		}
+		ans.args[arg_num-1][arg_idx]='\0'; //corto el arg
+		if(buffer[n] != '\0'){
+			arg_num++; //agregamos otro argumento
+			arg_idx=0;
+		}
+	}
+	ans.args_num=arg_num;
+	return ans;
+}
+
+/* intento de parser que retorna 1 si todavia hay comandos o 0 si el buffer corto*/
+static int parsero(const char* buffer, char* tgt){
+	int i=0;
+	int n=0;
+	for (; buffer[n] != ' ' && buffer[n] != '\0' ; n++)
+	{
+		tgt[i++]=buffer[n];
+	}
+	tgt[i]='\0';
+	if(buffer[n] == ' '){
+		return n+1;
+	}
+	return 0;
+}
+
+static char* arg_parser(const char* buffer, int * tracker){
+	char *aux=my_malloc(sizeof(char)*MAX_ARG_LEN);
+	int a_idx=0;
+	int n=*tracker;
+	for ( ; buffer[n] != ' ' && buffer[n] != '\0' ; n++)
+	{
+		aux[a_idx]=buffer[n];
+	}
+	if(buffer[n] == ' '){
+		n++;
+	}
+
+	printString("en arg_psr");
+	ncPrintDec(n);
+	*tracker=n;
+	aux[a_idx]='\0';
+	for(a_idx=0; aux[a_idx] != '\0'; a_idx++){
+		printChar(aux[a_idx]);
+	}
+	return aux;
 }
 
 static void bufferClean( char* buffer){

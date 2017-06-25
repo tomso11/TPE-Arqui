@@ -6,6 +6,8 @@
 #define OK 0
 #define NOT_EXIST 1
 #define ERROR_ARGS 2
+#define MAX_ARGS 3
+#define MAX_ARG_LEN 15
 
 typedef struct {
 	char * command;  /* Nombre del comando */
@@ -17,6 +19,12 @@ typedef struct {
 #include <stdint.h>
 
 int shell();
+
+static char* arg_parser(const char* buffer, int* trckr);
+
+static int parsero(const char* buffer, char* tgt);
+
+static command_t parse_args(const char* buffer, int n);
 
 static void bufferClean( char* buffer);
 
