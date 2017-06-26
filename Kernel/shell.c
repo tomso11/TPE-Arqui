@@ -39,11 +39,8 @@ int shell(){
 	int* tracker=my_malloc(sizeof(int*));
 	*tracker=0;
 
-	//
-	//load en pantalla ?
-	//
+	
 
-	/*PUT STRING HACE EXPLOTAR TODOOOOO*/
 	while(loop ){
 		//putstring("[User@gatOS]$  ");
 		putchar('>');
