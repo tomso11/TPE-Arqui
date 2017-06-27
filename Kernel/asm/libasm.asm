@@ -8,7 +8,7 @@ GLOBAL irq12Handler
 GLOBAL irq80Handler
 GLOBAL read_port
 GLOBAL write_port
-GLOBAL keyboard
+GLOBAL run_mod
 GLOBAL sys_callHandler
 EXTERN sys_write
 EXTERN sys_read
@@ -39,6 +39,16 @@ irq12Handler:
 irq80Handler:
 	jp sys_callHandler
 
+run_mod:
+	push rbp
+	mov rbp, rsp
+
+	call [rax] ;en rax estara la direccion en hx del modulo a correr
+
+	mov rsp, rbp
+	pop rbp
+	ret
+	
 cursor:
 	pushaq
 	push rbp

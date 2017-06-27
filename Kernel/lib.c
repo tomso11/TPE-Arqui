@@ -50,6 +50,7 @@ void * memcpy(void * destination, const void * source, uint64_t length)
 	return destination;
 }
 
+/*
 void * malloc (int size) {
 	return (void *) res(size); // res es un syscall 
 }
@@ -58,7 +59,7 @@ void * malloc (int size) {
 void free(void * ptr){
 	return;
 }
-
+*/
 
 /* A partir de un string retorna su valor entero */
 int atoi(const char *str) {

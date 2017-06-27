@@ -80,7 +80,7 @@ uint64_t sys_write(uint64_t fds, const char * str, uint64_t length) {
 
 /* SystemCall Malloc */
 uint64_t sys_malloc(uint64_t bytes) {
-	return (uint64_t) malloc(bytes);
+	//return (uint64_t) malloc(bytes);
 }
 
 /* System call que retorna la dirección del módulo de datos */
