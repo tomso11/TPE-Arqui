@@ -2,15 +2,15 @@
 #include "shellcommands.h"
 #include "shell.h"
 
-#include "driverVideo.h" //debug
+//#include "driverVideo.h" //debug
 
 int main(){
-	printString("entershell");
+	//printString("entershell");
 	shell();
 	return 0;
 }
 int shell(){
-	printString("entershell");
+	//printString("entershell");
 	int loop=1;
 	char buff[BUFF_SIZE];
 	int commandlen;
@@ -40,7 +40,7 @@ int shell(){
 				i = 0;
 			}
 			//buff[i]=s;
-			printChar(s);
+			//printChar(s);
 			//putchar(s);
 			i++;
 				if(i > 0)
@@ -53,7 +53,7 @@ int shell(){
 			// putchar(c);
 			// putchar(c);
 		}
-		printString("does it stop");
+		//printString("does it stop");
 		putchar('\n');
 		cleanBuffer(buff);
 		cmd = parseCmd(buff);

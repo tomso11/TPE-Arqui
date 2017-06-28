@@ -1,11 +1,11 @@
 #include "ctype.h"
 #include "stdlib.h"
-#include "stringlib.h"
+#include <stringlib.h>
 #include "stdio.h"
-#include "syscalls.h"
+//#include "syscalls.h"
 
-#include "driverVideo.h" //debug
-#include "naiveConsole.h"
+//#include "driverVideo.h" //debug
+//#include "naiveConsole.h"
 
 
 #include <stdarg.h>
@@ -65,10 +65,10 @@ static int fprinttype(unsigned int fds, const char *format, va_list args) {
 			symbol = *format++;
 			switch(symbol) {
 				case 'd':
-					len += printi(fds, va_arg(args, int), aux);
+					//len += printi(fds, va_arg(args, int), aux);
 					break;
 				case 'i':
-					len += printi(fds, va_arg(args, int), aux);
+					//len += printi(fds, va_arg(args, int), aux);
 					break;
 				case 's':
 					len += prints(fds, va_arg(args, char *));
@@ -91,11 +91,11 @@ static int fprinttype(unsigned int fds, const char *format, va_list args) {
 }
 
 
-/*Imprime un número entero en la pantalla */
-static int printi(unsigned int fds,int value, char aux[]) {
-	itoa(value, aux, 10); // guarda en buffer el string del valor en base 10
-	return prints(fds, aux);
-}
+///*Imprime un número entero en la pantalla */
+//static int printi(unsigned int fds,int value, char aux[]) {
+//	itoa(value, aux, 10); // guarda en buffer el string del valor en base 10
+//	return prints(fds, aux);
+//}
 
 /*Imprime una cadena de carateres a pantalla */
 static int prints(unsigned int fds, const char *str) {
@@ -115,27 +115,27 @@ int readRow(char *str, unsigned int maxlen) {
     return i;
 }
 
-/* Lee toda una linea de input y limpia si queda un espacio al final. */
-int readRowAndClear(char *str, unsigned int maxlen) {
-	unsigned int i = 0;
-	int c;
-	char state = SPACE;
-	while ((c = getchar(str)) != '\n' && i < maxlen-1) {
-		if (state != SPACE) {
-			str[i++] = c;
-			if (isspace(c))
-				state = SPACE;
-		}
-		else if (!isspace(c)) {
-			str[i++] = c;
-			state = !SPACE;
-		}
-	}
-	if (i > 0 && isspace(str[i-1]))
-		i--;  // Se borra el utimo espacio si lo hay
-	str[i] = '\0';
-	return i;
-}
+// /* Lee toda una linea de input y limpia si queda un espacio al final. */
+// int readRowAndClear(char *str, unsigned int maxlen) {
+// 	unsigned int i = 0;
+// 	int c;
+// 	char state = SPACE;
+// 	while ((c = getchar(str)) != '\n' && i < maxlen-1) {
+// 		if (state != SPACE) {
+// 			str[i++] = c;
+// 			if (isspace(c))
+// 				state = SPACE;
+// 		}
+// 		else if (!isspace(c)) {
+// 			str[i++] = c;
+// 			state = !SPACE;
+// 		}
+// 	}
+// 	if (i > 0 && isspace(str[i-1]))
+// 		i--;  // Se borra el utimo espacio si lo hay
+// 	str[i] = '\0';
+// 	return i;
+// }
 
 int super_getchar(){
 	char * getch=my_malloc(1);
@@ -187,50 +187,50 @@ static void buffil() {
 
 }
 
-/*Implementacion de scanf que acepta los simbolos d y s.*/
-int scanf(const char *format, ...) {
-	int i, j, num;
-	int argc = 0;
-	int *p;
-	char *str;
-	char aux[BUFF_SIZE];
-	va_list args;
-	va_start(args, format);
+// /*Implementacion de scanf que acepta los simbolos d y s.*/
+// int scanf(const char *format, ...) {
+// 	int i, j, num;
+// 	int argc = 0;
+// 	int *p;
+// 	char *str;
+// 	char aux[BUFF_SIZE];
+// 	va_list args;
+// 	va_start(args, format);
 
-	readRow(aux, BUFF_SIZE);
+// 	readRow(aux, BUFF_SIZE);
 
-	for (i = j = 0; aux[j] != '\0' && format[i] != '\0'; i++, j++) {
-		if (format[i] == '%') {
-			i++;
-			if (format[i] == 'd') {
-				if(aux[j] != '+' && aux[j] != '-' && !isdigit(aux[j]))
-					return argc;
-				num = atoi(aux + j);
-				p = va_arg(args, int *);
-				*p = num;
-				while (isdigit(aux[j+1]))
-					j++;
-			}
-			else if (format[i] == 's') {
-				str = va_arg(args, char *);
-				strcpy(str, aux+j);
-				return argc+1;
-			}
-			else if (format[i] == '%' && aux[j++] != '%')
-				return argc;
-			argc++;
-		} 
-		else if (format[i] != aux[j])
-			return argc;
-	}
+// 	for (i = j = 0; aux[j] != '\0' && format[i] != '\0'; i++, j++) {
+// 		if (format[i] == '%') {
+// 			i++;
+// 			if (format[i] == 'd') {
+// 				if(aux[j] != '+' && aux[j] != '-' && !isdigit(aux[j]))
+// 					return argc;
+// 				num = atoi(aux + j);
+// 				p = va_arg(args, int *);
+// 				*p = num;
+// 				while (isdigit(aux[j+1]))
+// 					j++;
+// 			}
+// 			else if (format[i] == 's') {
+// 				str = va_arg(args, char *);
+// 				strcpy(str, aux+j);
+// 				return argc+1;
+// 			}
+// 			else if (format[i] == '%' && aux[j++] != '%')
+// 				return argc;
+// 			argc++;
+// 		} 
+// 		else if (format[i] != aux[j])
+// 			return argc;
+// 	}
 
-	va_end(args);
-	return argc;
-}
+// 	va_end(args);
+// 	return argc;
+// }
 
-int usr_clear(){
-	clear();
-}
+// int usr_clear(){
+// 	clear();
+// }
 
 void * my_malloc(int bytes){
 	static void * position = 0x7000000;

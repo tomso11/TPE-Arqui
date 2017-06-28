@@ -66,6 +66,7 @@ int shell(){
 			// putchar(c);
 			// putchar(c);
 		}
+		putchar('\n');
 		buff[i]='\0';
 		//printString("does it stop");
 

@@ -66,7 +66,7 @@ static void printTime(unsigned int n) {
 }
 
 static int clear_sc(const char **args, int args_num) {
-  return usr_clear();
+  //return usr_clear();
 }
 
 
