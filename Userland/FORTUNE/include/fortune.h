@@ -1,0 +1,1 @@
+char * magic(int n);

@@ -20,26 +20,10 @@ typedef struct {
 
 int shell();
 
-static char* arg_parser(const char* buffer, int* trckr);
+void echon(char * buffer, int index);
 
-static int parsero(const char* buffer, char* tgt);
+int parsebuffer(char * buffer);
 
-static command_t parse_args(const char* buffer, int n);
-
-static void bufferClean( char* buffer);
-
-static void space_eater(char* buffer);
-
-static command_t parser(const char*buffer);
-
-static int interpret(const char * buffer, char * command);
-
-static void printErrorMsg(int error);
-
-/* come espacios y aplica los backspace */
-static void cleanBuffer(char* buffer);
-
-/* Toma el input y separa el comando y los argumentos .*/
-static command_t parseCmd( const char * buffer );
+void bufferClean (char * buffer);
 
 #endif

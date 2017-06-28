@@ -27,7 +27,9 @@ static const uint64_t PageSize = 0x1000;
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
 static void * const shellAddress = (void*)0x600000; // elijo una posicion de memoria que no voy a pisar
-static void * const superUserAddress= (void*)0x700000;
+//static void * const superUserAddress= (void*)0x700000;
+static void * const fortuneAddress= (void*) 0x700000;
+static void * const dummyAddress= (void*) 0x800000;
 static void * const currentAddress = (void*)0xA00000; // address logico donde compila nuestro modulo
 
 typedef struct{
@@ -79,7 +81,8 @@ void * initializeKernelBinary()
 		sampleCodeModuleAddress,
 		sampleDataModuleAddress,
 		shellAddress,
-		superUserAddress
+		fortuneAddress,
+		dummyAddress
 
 	};
 
@@ -164,6 +167,15 @@ void copy_mod(uint64_t mod_addr){
 	memcpy(currentAddress, mod_addr, PageSize);
 }
 
+ /* mapeo de los modulos a una direccion fisica para correr */
+void mapModules(uint64_t  phys_addr ){
+ 		uint64_t * PDbase= (uint64_t*) 0x10000; // base del page direc
+ 		uint64_t * userEntry= PDbase + 4;
+ 		*userEntry= phys_addr + 0x8F;// + 0x8B;
+ 		return;
+
+}
+
 int main()
 {	
 	ncPrint("[Kernel Main]");
@@ -203,14 +215,16 @@ int main()
 
 	sti();
 	saveCR3();
-
 	clear();
+
+	//initializeKernelBinary();
+	//clear();
 
 	flow_manager();
 
-	clear();
+	//clear();
 	
-	shell();
+	//shell();
 	while(1);
 
 	return 0;
@@ -237,12 +251,13 @@ void flow_manager(){
 				case 2:
 				printString("enter 2\n");
 					copy_mod(shellAddress);
+					mapModules((void*)shellAddress);
 					ncPrintHex(shellAddress);
 					printChar('\n');
 					ncPrintHex(currentAddress);
 					printChar('\n');
-					run_mod(shellAddress);
-					//((EntryPoint)shellAddress)();
+					//run_mod(shellAddress);
+					((EntryPoint)currentAddress)();
 					//shell();
 					loop=0;
 					break;
