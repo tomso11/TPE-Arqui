@@ -1,6 +1,6 @@
 include ../Makefile.inc
 
-MODULE=0003-superUser.bin
+MODULE=/0003-superUser.bin
 ASMSOURCES= $(wildcard asm/*.asm)
 SOURCES=$(wildcard [^_]*.c)
 ASMOBJECTS=$(ASMSOURCES:.asm=.o)

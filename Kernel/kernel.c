@@ -160,6 +160,10 @@ void * initializeKernelBinary()
 	
 // }
 
+void copy_mod(uint64_t mod_addr){
+	memcpy(currentAddress, mod_addr, PageSize);
+}
+
 int main()
 {	
 	ncPrint("[Kernel Main]");
@@ -232,17 +236,22 @@ void flow_manager(){
 					break;
 				case 2:
 				printString("enter 2\n");
-					//copy_mod(shellAddress);
+					copy_mod(shellAddress);
+					ncPrintHex(shellAddress);
+					printChar('\n');
+					ncPrintHex(currentAddress);
+					printChar('\n');
+					run_mod(shellAddress);
 					//((EntryPoint)shellAddress)();
-					shell();
+					//shell();
 					loop=0;
 					break;
 				case 3:
 				printString("enter 3\n");
 					//copy_mod(superUserAddress);
-					((EntryPoint)superUserAddress)();
+					//((EntryPoint)superUserAddress)();
+					superUser();
 					loop=0;
-					printString("gmh");
 					break;
 				default:
 					break;

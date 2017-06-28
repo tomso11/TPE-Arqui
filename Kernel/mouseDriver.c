@@ -253,7 +253,7 @@ void mouse_handle() {
 }
 
 void mouse_packet_handler(mouse_device_packet_t packet){
-  update_cursor(packet.x_difference/120,packet.y_difference/120);
+  update_cursor(packet.x_difference,packet.y_difference);
   if(packet.buttons == LEFT_CLICK){
     printString("Left Button");
   }
@@ -266,6 +266,10 @@ void mouse_packet_handler(mouse_device_packet_t packet){
 }
 
 int cap_movement(int number){
-  int n;
+  int n=0;
+  if(number > 10){
+    n++;
+    number=number-10;
+  }
   return n;
 }

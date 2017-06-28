@@ -43,7 +43,7 @@ run_mod:
 	push rbp
 	mov rbp, rsp
 
-	call [rax] ;en rax estara la direccion en hx del modulo a correr
+	jmp rax ;en rax estara la direccion en hx del modulo a correr
 
 	mov rsp, rbp
 	pop rbp
