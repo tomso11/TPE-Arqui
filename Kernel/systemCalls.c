@@ -63,16 +63,16 @@ uint64_t sys_read(uint64_t fds, char * buffer, uint64_t bytes) {
 }
 
 /* SystemCall de Write para escribir a salida estándar */
-uint64_t sys_write(uint64_t fds, const char * str, uint64_t length) {
+uint64_t sys_write(uint64_t fds, const char  str, uint64_t length) {
 	if (fds == STDERR) { // podriamos darle un color especial para diferenciar los errores
-		printString(*str);
+		printString(str);
 	} 
 	else if (fds == STDOUT) {
 		// if(*str == '\n' || *str == '\b'){
 		// 	printString("bhello");
 		// 	return 0;
 		// }
-		printChar(*str);
+		printChar(str);
 	}
 	return 0;
 }

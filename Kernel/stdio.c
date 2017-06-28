@@ -23,9 +23,9 @@ static void * position = 0x7000000; //para malloc
 
 /* Imprime un caracter en el descriptor indicado */
 void fputchar(unsigned int fds, int c) {
-	char * buff;
-	*buff=c;
-	write(fds, buff, 1); //syscall
+	//char * buff;
+	//*buff=c;
+	write(fds, c, 1); //syscall
 }
 
 /* Imprime un caracter a salida estándar */

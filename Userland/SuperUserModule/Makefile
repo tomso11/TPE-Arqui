@@ -1,23 +1,23 @@
 include ../Makefile.inc
 
-MODULE=../0003-superUser.bin
-SOURCES=$(wildcard *.c)
-SOURCES_ASM=$(wildcard asm/*.asm)
-OBJECTS=$(SOURCES:.c=.o)
-OBJECTS_ASM=$(SOURCES_ASM:.asm=.o)
-
-all: $(MODULE)
-
-$(MODULE):  $(OBJECTS)  $(OBJECTS_ASM)
-	$(LD) $(LDFLAGS) -T superUser.ld -o $(MODULE)  $(OBJECTS) $(OBJECTS_ASM) 
+MODULE=0003-superUser.bin
+ASMSOURCES= $(wildcard asm/*.asm)
+SOURCES=$(wildcard [^_]*.c)
+ASMOBJECTS=$(ASMSOURCES:.asm=.o)
+COBJECTS=$(SOURCES:.c=.o)
 
 %.o: %.c
-	$(GCC) $(GCCFLAGS) -I./include -c $< -o $@
+	$(GCC) $(GCCFLAGS) -I./include -c _loader.c $(SOURCES) 
 
-%.o : %.asm
+%.o: %.asm
 	$(ASM) $(ASMFLAGS) $< -o $@
 
+all: $(USER)
+
+$(USER): $(ASMOBJECTS) $(COBJECTS)
+	$(LD) -T superUser.ld _loader.o $(COBJECTS) $(ASMOBJECTS) -o ../$(MODULE)
+
 clean:
-	rm -rf asm/*.o *.o *.bin
+	rm -rf *.o
 
 .PHONY: all clean

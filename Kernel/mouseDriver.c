@@ -2,6 +2,7 @@
 #include <driverVideo.h>
 #include <driverKeyboard.h>
 #include "mouseDriver.h"
+#include "naiveConsole.h"
 
 int dx;
 int dy;
@@ -183,8 +184,12 @@ void mouse_handle() {
           }
           mouse_device_packet_t packet;
           packet.magic = MOUSE_MAGIC;
-          packet.x_difference = mouse_byte[1];
-          packet.y_difference = mouse_byte[2];
+          packet.x_difference = cap_movement(mouse_byte[1]);
+          packet.y_difference = cap_movement(mouse_byte[2]);
+          ncPrintDec(packet.x_difference);
+          printChar('\n');
+          ncPrintDec(packet.y_difference);
+          printChar('\n');
           packet.buttons = 0;
           if (mouse_byte[0] & 0x01) {
             packet.buttons |= LEFT_CLICK;
@@ -258,4 +263,9 @@ void mouse_packet_handler(mouse_device_packet_t packet){
   if(packet.buttons == MIDDLE_CLICK){
     printString("Middle Button");
   }
+}
+
+int cap_movement(int number){
+  int n;
+  return n;
 }

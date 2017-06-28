@@ -13,7 +13,7 @@ int read(unsigned int fd, char *buff, unsigned int bytes) {
 }
 
 /* SystemCall Write */
-int write(unsigned int fd, void *buff, unsigned int bytes) {
+int write(unsigned int fd, char buff, unsigned int bytes) {
     //return _int80h(4, fd, (uint64_t) buff, bytes);
     int i;
     writeC(buff,bytes);

@@ -18,9 +18,7 @@ sampleDataModule:
 
 clean:
 	cd SampleCodeModule; make clean
-	cd ShellModule; make clean
-	cd SuperUserModule; make clean
 	rm -rf *.bin
 
 
-.PHONY: sampleCodeModule shellModule superUserModule all clean
+.PHONY: sampleCodeModule  all clean

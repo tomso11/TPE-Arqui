@@ -53,7 +53,7 @@ int shell(){
 				i = 0;
 			}
 			buff[i]=s;
-			printChar(s);
+			putchar(s);
 			//putchar(s);
 			i++;
 				if(i > 0)
