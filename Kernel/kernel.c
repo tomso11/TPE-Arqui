@@ -1,3 +1,7 @@
+/* la idea es generar un contexto para cada modulo que se ejecute, ocn un modulo de shell contexto 0 ejecutado por default. cada vez que llamemos a un modulo crearemos un nuevo contexto que copiara directamente dela direccion donde esta cargado el modulo a la direccion fisica que elegiremos ( asignaremos direcciones por pagina). los modulos nuevos se ejecutaran desde la shell y volveran a esta, pudiendo invocar shell anidadas.*/
+
+
+
 #include <stdint.h>
 #include <moduleLoader.h>
 #include <naiveConsole.h>
