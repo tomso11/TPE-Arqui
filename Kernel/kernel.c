@@ -9,6 +9,8 @@
 #include <mouseDriver.h>
 #include <shell.h>
 
+#define MAX_CONTEXTS 12
+
 extern uint8_t text;
 extern uint8_t rodata;
 extern uint8_t data;
@@ -24,11 +26,21 @@ static void * const shellAddress = (void*)0x600000; // elijo una posicion de mem
 static void * const superUserAddress= (void*)0x700000;
 static void * const currentAddress = (void*)0xA00000; // address logico donde compila nuestro modulo
 
+static int n_context=0;
+static context_t contexts[MAX_CONTEXTS];
+static int current_context=0;
+
 typedef int (*EntryPoint)();
 typedef int (*EntryPointS)(int);
 typedef void (*handler_t)(void);
 
 int choose_mod(char c);
+
+typedef struct{
+	uint64_t phys;
+	int prev_context;
+}context_t
+
 
 void clearBSS(void * bssAddress, uint64_t bssSize)
 {
@@ -60,7 +72,9 @@ void * initializeKernelBinary()
 	void * moduleAddresses[] = { //cargamos los modulos en memoria 
 		sampleCodeModuleAddress,
 		sampleDataModuleAddress,
-		shellAddress
+		shellAddress,
+		superUserAddress
+
 	};
 
 	loadModules(&endOfKernelBinary, moduleAddresses);
@@ -102,8 +116,42 @@ void mapModules(uint64_t  phys_addr ){
 }
 
 /* copia el modulo a ejecutar al address donde correremos todos los programas */
-void copy_mod(uint64_t mod_addr){
-	memcpy(currentAddress, mod_addr, 0x20000); // son 128KB, es arbitrario pero me parece que ningun modulo va a ocupar mas que eso
+void copy_mod(uint64_t mod_addr, int prev_context ){
+	uint64_t phys_addr;	
+	n_context++;
+	error=add_context(n_context, prev_context);
+	if ( error ){
+			printString("Max amount of context created, please restart.\n");
+			n_context--;
+			return;
+	}
+	phys_addr=contexts[n_context].phys;	
+	memcpy(phys_addr, mod_addr, PageSize); // son 128KB, es arbitrario pero me parece que ningun modulo va a ocupar mas que eso
+		
+}	
+
+uint64_t get_context_phys(int n_context){
+	return currentAddress+(PageSize*n_context);
+}
+
+int add_context(int n_context, int prev_context){
+	if(n_context > 11){
+		return 1;
+	}
+	uint64_t phys_addr= get_context_phys(n_context);
+	contexts[n_context].prev_context=prev_context;
+	contexts[n_context].phys=phys_addr;	
+}
+
+/* syscall run handler*/
+void loader(int option){
+	parseOption(option);
+	copy_mod(option, current_context);
+	current_context=n_context;
+	((EntryPoint)option)();
+//	current_context=contexts[n_context].prev_context;   //esto solo es necesario si no vuelve al contexto anterior de forma automatica
+//	((EntryPoint)prev_context)();
+	
 }
 
 int main()
