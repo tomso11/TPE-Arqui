@@ -25,15 +25,13 @@ static int bufferPlace = 0;
 static int polledPlace = 0;
 static char buffer[ROWS*COLS] = {0};
 
+/* Handler de la interrupcion de teclado. Al presionarse una tecla, la añade la buffer de teclado. */
+
 void keyboard_handler(void) {
 	int keycode;
 	int tab;
 	keycode = get_key();
 	buffer[bufferPlace] = keycode;
-	// set_nccursor(get_vdcursor());
-	// ncPrintHex(keycode);
-	// ncPrintChar(' ');
-	// set_vdcursor(get_nccursor());
 
 	if(keycode == 0x2A || keycode == 0x36 || (keycode == 0x3A && mayus == 0) ){ 
 		mayus =!mayus;

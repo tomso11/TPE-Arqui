@@ -28,6 +28,7 @@ void initialize_cursor(){
 }
 
 
+/* Escribe en el video. Realiza los chequeos correspondientes al limite de la pantalla*/
 
 void printChar(char character){
 	if( currentVideo == video+4000 ){
@@ -90,6 +91,8 @@ void clear(){
     cursor_y=y;
  }
 
+/* Realiza la seleccion del mouse. */
+
 void selection(int finit, int cinit, int ffin, int cfin){
  
 	int i= finit*width+ cinit;
@@ -100,6 +103,8 @@ void selection(int finit, int cinit, int ffin, int cfin){
 		i++;
 	}
 }
+
+/* Borra la seleccion del mouse una vez realizada la accion con esta */
 
 void undoSelection(int finit, int cinit, int ffin, int cfin){
 	int i= finit*width+ cinit;
@@ -112,6 +117,8 @@ void undoSelection(int finit, int cinit, int ffin, int cfin){
 
 } 
 
+/*dibuja el cursor*/
+
 void drawMouse(int f, int c){
 	if(!validPosition(f,c)) return;
 	*(video+(c*width*2)+(f*width*2*height)+1)=(char) 0x30;
@@ -121,17 +128,25 @@ void udrawMouse(int f, int c){
 	*(video+(c*width*2)+(f*width*2*height)+1)=(char) 0x0F; // fondo negro con blanco como texto
 }
 
+/* Chequea que sea una posicion valida en pantalla para realizar la copia*/
+
 int validPosition(int f, int c){
 	return (f>=width || c>=width || f<0 || c<0)? 0:1;
 }
+
+/* DEPRECATED */
 
 unsigned char* get_vdcursor(){
 	return currentVideo;
 }
 
+/* DEPRECATED */
+
 void set_vdcursor(unsigned char* ptr){
 	currentVideo=ptr;
 }
+
+/* Realiza el backspace siempre y cuando no este en la primera posicion */
 
 void backspace(){
 	if(currentVideo == video){
@@ -141,6 +156,8 @@ void backspace(){
 	*currentVideo=' ';
 	return;
 }
+
+/* Realiza el newline teniendo en cuenta si se pasa la ultima linea, si sucede, realiza un scroll */
 
 void newline(){
 
@@ -160,6 +177,8 @@ void newline(){
 	currentVideo=aux;
 	return;
 }
+
+
 
 void scroll(){
 	unsigned char * act= video;

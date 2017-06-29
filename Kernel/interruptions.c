@@ -24,6 +24,7 @@ typedef struct {
 
 #pragma pack(pop)
 
+
 static IDTEntry_t* IDT = (IDTEntry_t*) 0x0;
 
 
@@ -47,19 +48,21 @@ void tickHandler() {
 
 }
 
+/* en "driverKeyboard.c" */
 void keyboardHandler(){
-	keyboard_handler(); // lo de abajo funciona pero imprime con unos espacios raros q la verdad ni idea asique hay q arreglarlo
-	// addToBuffer();
-	// char aux=get_char();
-	// printChar(aux);
-	// //testfoo();
+	keyboard_handler(); 
 }
 
+/*en "mouseDriver.c"*/
 void mouseHandler(){
 	//testfoo();
 	mouse_handle();
 
 }
+
+/*DEPRECATED*/
+/*Se maneja de otra forma desde lib.asm*/
+
 int co=0;
 void syscallHandler(uint64_t rax, uint64_t rbx, uint64_t rcx, uint64_t rdx){
 	

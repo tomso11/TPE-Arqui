@@ -3,10 +3,11 @@
 #include "stdlib.h"
 #include "systemCalls.h"
 
-
+/* DEPRECATED */
 /* Vector de system calls */
 static uint64_t (*syscalls[]) (uint64_t,uint64_t,uint64_t) = { 0,0,0,/* 0, 1, 2 system calls reservados*/sys_read_wr, sys_write_wr,	sys_time_wr, sys_malloc_wr, sys_data_address_wr, sys_clear_wr};
 
+/*DEPRECATED*/
 
 /* WRAPPERS */
 static uint64_t sys_write_wr(uint64_t fds, uint64_t str, uint64_t length) {
@@ -34,6 +35,7 @@ static uint64_t sys_clear_wr(uint64_t unused1, uint64_t unused2, uint64_t unused
 }
 /* WRAPPERS */
 
+/*DEPRECATED*/
 /* Ejecuta la system call correspondiente al valor de rax */
 uint64_t syscallDispatcher(uint64_t rax, uint64_t rbx, uint64_t rdx, uint64_t rcx) {
 	if (rax < SYSCALL_S && rax >= 3)
@@ -41,7 +43,10 @@ uint64_t syscallDispatcher(uint64_t rax, uint64_t rbx, uint64_t rdx, uint64_t rc
 	return 0;
 }
 
+
+/*Syscall read y write llamadas desde libasm, se conectan directamente con las funciones del Kernel*/
 /* SystemCall de Read para leer de entrada estandar*/
+/* el int que se retorna permite chequear si consumimos todo el buffer de teclado*/
 uint64_t sys_read(uint64_t fds, char * buffer, uint64_t bytes) {
 	unsigned int i = 0;
 	char c;
@@ -78,6 +83,12 @@ uint64_t sys_write(uint64_t fds, const char  str, uint64_t length) {
 }
 
 
+uint64_t sys_clear(){
+	clear();
+	return 0;
+}
+
+/*NOT IMPLEMENTED*/
 /* SystemCall Malloc */
 uint64_t sys_malloc(uint64_t bytes) {
 	//return (uint64_t) malloc(bytes);
@@ -101,7 +112,4 @@ uint64_t sys_time(uint64_t selection) {
     return -1;
 }
 
-uint64_t sys_clear(){
-	clear();
-	return 0;
-}
+

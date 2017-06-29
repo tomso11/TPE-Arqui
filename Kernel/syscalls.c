@@ -1,6 +1,8 @@
 #include "syscalls.h"
 #include "driverVideo.h" //debug
 
+/* Ambas llamadas son llamadas desde "stdio.c" y llaman funciones de "stdio.asm" */
+
 /* SystemCall Read */
 int read(unsigned int fd, char *buff, unsigned int bytes) {
      int i;
@@ -20,6 +22,7 @@ int write(unsigned int fd, char buff, unsigned int bytes) {
     return i;
 }
 
+/* NOT IMPLEMENTED */
 /* SystemCall para malloc*/
 void * res (unsigned int bytes) {
 	return (void *) _int80h(5, bytes, 0, 0);

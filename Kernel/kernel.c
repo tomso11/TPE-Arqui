@@ -32,22 +32,12 @@ static void * const fortuneAddress= (void*) 0x700000;
 static void * const dummyAddress= (void*) 0x800000;
 static void * const currentAddress = (void*)0xA00000; // address logico donde compila nuestro modulo
 
-typedef struct{
-	uint64_t phys;
-	int prev_context;
-}context_t;
-
-static int n_context=0;
-static context_t contexts[MAX_CONTEXTS];
-static int current_context=0;
 
 typedef int (*EntryPoint)();
 typedef int (*EntryPointS)(int);
 typedef void (*handler_t)(void);
 
 int choose_mod(char c);
-
-
 
 
 void clearBSS(void * bssAddress, uint64_t bssSize)
@@ -115,54 +105,8 @@ void * initializeKernelBinary()
 	return getStackBase();
 }
 
-// /* mapeo de los modulos a una direccion fisica para correr */
-// void mapModules(uint64_t  phys_addr ){
-// 		uint64_t * PDbase= (uint64_t*) 0x10000; // base del page direc
-// 		uint64_t * userEntry= PDbase + 4;
-// 		*userEntry= phys_addr + 0x8F;// + 0x8B;
-// 		return;
 
-// }
-
-// /* copia el modulo a ejecutar al address donde correremos todos los programas */
-// void copy_mod(uint64_t mod_addr, int prev_context ){
-// 	uint64_t phys_addr;	
-// 	n_context++;
-// 	error=add_context(n_context, prev_context);
-// 	if ( error ){
-// 			printString("Max amount of context created, please restart.\n");
-// 			n_context--;
-// 			return;
-// 	}
-// 	phys_addr=contexts[n_context].phys;	
-// 	memcpy(phys_addr, mod_addr, PageSize); // son 128KB, es arbitrario pero me parece que ningun modulo va a ocupar mas que eso
-		
-// }	
-
-// uint64_t get_context_phys(int n_context){
-// 	return currentAddress+(PageSize*n_context);
-// }
-
-// int add_context(int n_context, int prev_context){
-// 	if(n_context > 11){
-// 		return 1;
-// 	}
-// 	uint64_t phys_addr= get_context_phys(n_context);
-// 	contexts[n_context].prev_context=prev_context;
-// 	contexts[n_context].phys=phys_addr;	
-// }
-
-// /* syscall run handler*/
-// void loader(int option){
-// 	parseOption(option);
-// 	copy_mod(option, current_context);
-// 	current_context=n_context;
-// 	((EntryPoint)option)();
-// //	current_context=contexts[n_context].prev_context;   //esto solo es necesario si no vuelve al contexto anterior de forma automatica
-// //	((EntryPoint)prev_context)();
-	
-// }
-
+//Copio el modulo a la direccion de memoria donde se correra el codigo
 void copy_mod(uint64_t mod_addr){
 	memcpy(currentAddress, mod_addr, PageSize);
 }
@@ -200,7 +144,7 @@ int main()
 
 	cli();
 
-	
+	/* Seteamos los handlers apropiados para cada interrupcion*/
 	iSetHandler(0x20, (uint64_t) irq0Handler);
 	iSetHandler(0x21, (uint64_t) &irq1Handler);
 	iSetHandler(0x2C, (uint64_t) &irq12Handler);
@@ -257,15 +201,17 @@ void flow_manager(){
 					ncPrintHex(currentAddress);
 					printChar('\n');
 					//run_mod(shellAddress);
-					((EntryPoint)currentAddress)();
+					((EntryPoint)shellAddress)();
 					//shell();
 					loop=0;
 					break;
 				case 3:
 				printString("enter 3\n");
+				mapModules((void *)fortuneAddress);
+				((EntryPoint)fortuneAddress)();
 					//copy_mod(superUserAddress);
 					//((EntryPoint)superUserAddress)();
-					superUser();
+					//superUser();
 					loop=0;
 					break;
 				default:
@@ -284,3 +230,52 @@ int choose_mod(char c){
 		return 3;
 	return 0;
 }
+
+
+// /* mapeo de los modulos a una direccion fisica para correr */
+// void mapModules(uint64_t  phys_addr ){
+// 		uint64_t * PDbase= (uint64_t*) 0x10000; // base del page direc
+// 		uint64_t * userEntry= PDbase + 4;
+// 		*userEntry= phys_addr + 0x8F;// + 0x8B;
+// 		return;
+
+// }
+
+// /* copia el modulo a ejecutar al address donde correremos todos los programas */
+// void copy_mod(uint64_t mod_addr, int prev_context ){
+// 	uint64_t phys_addr;	
+// 	n_context++;
+// 	error=add_context(n_context, prev_context);
+// 	if ( error ){
+// 			printString("Max amount of context created, please restart.\n");
+// 			n_context--;
+// 			return;
+// 	}
+// 	phys_addr=contexts[n_context].phys;	
+// 	memcpy(phys_addr, mod_addr, PageSize); // son 128KB, es arbitrario pero me parece que ningun modulo va a ocupar mas que eso
+		
+// }	
+
+// uint64_t get_context_phys(int n_context){
+// 	return currentAddress+(PageSize*n_context);
+// }
+
+// int add_context(int n_context, int prev_context){
+// 	if(n_context > 11){
+// 		return 1;
+// 	}
+// 	uint64_t phys_addr= get_context_phys(n_context);
+// 	contexts[n_context].prev_context=prev_context;
+// 	contexts[n_context].phys=phys_addr;	
+// }
+
+// /* syscall run handler*/
+// void loader(int option){
+// 	parseOption(option);
+// 	copy_mod(option, current_context);
+// 	current_context=n_context;
+// 	((EntryPoint)option)();
+// //	current_context=contexts[n_context].prev_context;   //esto solo es necesario si no vuelve al contexto anterior de forma automatica
+// //	((EntryPoint)prev_context)();
+	
+// }

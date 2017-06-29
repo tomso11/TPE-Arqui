@@ -2,7 +2,8 @@
 #include <fortune.h>
 
 int main(void){
-
+	char * v=0xB8000;
+	*v='X';
 	char ** ss = malloc(sizeof(char *));
 	char * string = malloc(2500);
 	ss[0] = string;

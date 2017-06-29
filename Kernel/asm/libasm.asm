@@ -27,6 +27,8 @@ EXTERN irqDispatcher
 
 section .text
 
+; Estos handlers llaman al irqDispatcher en "interruptions.c" con el parametro para elegir el handler que se requiere
+
 irq0Handler:
 	irqHandler 0
 	
@@ -39,6 +41,8 @@ irq12Handler:
 irq80Handler:
 	jp sys_callHandler
 
+; Nos permite correr un modulo con su direcc en rax
+
 run_mod:
 	push rbp
 	mov rbp, rsp
@@ -48,7 +52,9 @@ run_mod:
 	mov rsp, rbp
 	pop rbp
 	ret
-	
+
+; Dibuja el cursor en pantalla
+
 cursor:
 	pushaq
 	push rbp
@@ -66,6 +72,8 @@ cursor:
 	popaq
 	ret
 
+;Habilitar/deshabilitar las interrupciones
+
 sti:
 	sti
 	ret
@@ -73,6 +81,8 @@ sti:
 cli:
 	cli
 	ret
+
+;Seteo de PIC, provisto por la catedra
 	
 setPicMaster:
 	push rbp
@@ -95,6 +105,8 @@ setPicSlave:
 	mov rsp, rbp
 	pop rbp
 	ret
+
+;Leer y escribir en un puerto
 
 read_port:
 	push rbp
@@ -139,11 +151,14 @@ cpuVendor:
 	pop rbp
 	ret
 
+
 saveCR3:
 
 	mov rax, cr3
 	mov cr3, rax
 	ret
+
+; nos permite manejar el flujo de syscalls mediante el registro eax.
 
 sys_callHandler:
 	cli
@@ -184,6 +199,8 @@ finish:
 	sti
 	iretq
 
+
+;obtenido desde Pure64
 
 ; Set cursor position (text mode 80x25)
 ; @param BL The row on screen, starts from 0
