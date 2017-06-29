@@ -69,7 +69,7 @@ void clear(){
  	int x=cursor_x+col;
  	int y=cursor_y+row;
  	if(x>width*2){
- 		x=80;
+ 		x=160;
  	}
  	if(y>height){
  		y=25;
@@ -112,7 +112,7 @@ void selection(int finit, int cinit, int ffin, int cfin){
 	int i= finit*width+ cinit;
 	int fin= ffin*width+cfin;
 	while(validPosition(i/width,i%width) && i<=fin ){
-		
+
 		drawMouse(i/width,i%width);
 		i++;
 	}
@@ -133,13 +133,18 @@ void undoSelection(int finit, int cinit, int ffin, int cfin){
 
 /*dibuja el cursor*/
 
-void drawMouse(int f, int c){
-	if(!validPosition(f,c)) return;
-	*(video+(c*width*2)+(f*width*2*height)+1)=(char) 0x30;
+void drawMouse(int c, int f){
+	if(!validPosition(c,f)) return;
+		printString("\nDrawing to:");
+		ncPrintDec(c);
+		printChar(' ');
+		ncPrintDec(f*width*2);
+		printChar('\n');
+	*(video+(c)+(f*width*2)+1)=(char) 0x30;
 }
 void udrawMouse(int f, int c){
 	if(!validPosition(f,c)) return;
-	*(video+(c*width*2)+(f*width*2*height)+1)=(char) (*video*4000); // fondo negro con blanco como texto
+	*(video+(c)+(f*width*2)+1)=(char) 0x0F; // fondo negro con blanco como texto
 }
 
 /* Chequea que sea una posicion valida en pantalla para realizar la copia*/
