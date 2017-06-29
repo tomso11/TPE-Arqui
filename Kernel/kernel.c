@@ -164,7 +164,7 @@ int main()
 	//initializeKernelBinary();
 	//clear();
 
-	flow_manager();
+	//flow_manager();
 
 	//clear();
 	

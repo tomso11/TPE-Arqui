@@ -186,10 +186,10 @@ void mouse_handle() {
           packet.magic = MOUSE_MAGIC;
           packet.x_difference = cap_movement(mouse_byte[1]);
           packet.y_difference = cap_movement(mouse_byte[2]);
-          ncPrintDec(packet.x_difference);
-          printChar('\n');
-          ncPrintDec(packet.y_difference);
-          printChar('\n');
+          // ncPrintDec(packet.x_difference);
+          // printChar('\n');
+          // ncPrintDec(packet.y_difference);
+          // printChar('\n');
           packet.buttons = 0;
           if (mouse_byte[0] & 0x01) {
             packet.buttons |= LEFT_CLICK;
@@ -231,9 +231,9 @@ void mouse_handle() {
             packet.buttons |= MIDDLE_CLICK;
             }
             if (!(mouse_byte[0] & 0x20))
-              packet.y_difference |= 0xFFFFFF00; //delta-y is a negative value
+              packet.y_difference=-(packet.y_difference); //delta-y is a negative value
             if (!(mouse_byte[0] & 0x10))
-              packet.x_difference |= 0xFFFFFF00; //delta-x is a negative value
+              packet.x_difference =-(packet.x_difference); //delta-x is a negative value
             mouse_packet_handler(packet);
 
             // //udrawMouse(y,x);
