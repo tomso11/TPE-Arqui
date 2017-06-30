@@ -184,7 +184,7 @@ void flow_manager(){
 			mod=choose_mod(poll_keyboard_buffer(option,1));
 			switch(mod){
 				case 1:
-					printString("enter 1\n");
+					//printString("enter 1\n");
 					mapModules((uint64_t) sampleCodeModuleAddress);
 					//copy_mod(sampleCodeModuleAddress);
 					//saveCR3();
@@ -192,21 +192,21 @@ void flow_manager(){
 					loop=0;
 					break;
 				case 2:
-					printString("enter 2\n");
+					//printString("enter 2\n");
 					//copy_mod(shellAddress);
 					mapModules((uint64_t)shellAddress);
 					//saveCR3();
-					ncPrintHex(shellAddress);
-					printChar('\n');
-					ncPrintHex(currentAddress);
-					printChar('\n');
+					//ncPrintHex(shellAddress);
+					//printChar('\n');
+					//ncPrintHex(currentAddress);
+					//printChar('\n');
 					//run_mod(shellAddress);
 					((EntryPoint)currentAddress)();
 					//shell();
 					loop=0;
 					break;
 				case 3:
-					printString("enter 3\n");
+					//printString("enter 3\n");
 					//copy_mod(superUserAddress);
 					mapModules((uint64_t)superUserAddress);
 					//saveCR3();
@@ -217,7 +217,7 @@ void flow_manager(){
 					loop=0;
 					break;
 				case 4:
-					printString("enter 4\n");
+					//printString("enter 4\n");
 					mapModules((uint64_t)dumbModuleAddress);
 					//copy_mod(dumbModuleAddress);
 					//saveCR3();
