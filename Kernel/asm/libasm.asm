@@ -17,6 +17,7 @@ EXTERN sys_clear
 ;EXTERN sys_call_runC
 GLOBAL cli
 GLOBAL saveCR3
+GLOBAL page_enable
 
 GLOBAL set_cursor
 GLOBAL cursor
@@ -156,6 +157,18 @@ saveCR3:
 
 	mov rax, cr3
 	mov cr3, rax
+	ret
+
+;osdev for page enabling
+
+page_enable:
+	mov rax, 0x10000  ;PD base
+	mov cr3,rax
+
+	mov rax,cr0
+	or rax, 0x8000001
+	mov cr0,rax
+
 	ret
 
 ; nos permite manejar el flujo de syscalls mediante el registro eax.

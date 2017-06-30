@@ -4,8 +4,17 @@
 #include "mouseDriver.h"
 #include "naiveConsole.h"
 
-int dx;
-int dy;
+
+uint8_t mouse_cycle = 0;
+int8_t  mouse_byte[3];
+
+static int x=10;
+static int y=10;
+static int xo=0;
+static int yo=0;
+static int xf=0;
+static int yf=0;
+static int select_flag=0;
 
 void mouse_wait(unsigned char type){
   unsigned int time_out=100000;
@@ -81,83 +90,10 @@ void initialize_Mouse() {
 }
 
 
-void mouse_handler(){
-  static unsigned char cycle = 0;
-  static char mouse_bytes[3];
-  mouse_bytes[cycle++] = read_port(0x60);
- 
-  if (cycle == 3) { // if we have all the 3 bytes...
-    cycle = 0; // reset the counter
-    // to use the coordinate data, use mouse_bytes[1] for delta-x, and mouse_bytes[2] for delta-y
-    mouse_bytes[1]=dx;
-    mouse_bytes[2]=dy;
-    // do what you wish with the bytes, this is just a sample
-    if ((mouse_bytes[0] & 0x80) || (mouse_bytes[0] & 0x40))
-      return; // the mouse only sends information about overflowing, do not care about it and return
-    if (!(mouse_bytes[0] & 0x20))
-       dy |= 0xFFFFFF00; //delta-y is a negative value
-    if (!(mouse_bytes[0] & 0x10))
-       dx |= 0xFFFFFF00; //delta-x is a negative value
-    if (mouse_bytes[0] & 0x4)
-      printString("Middle button is pressed!");
-    if (mouse_bytes[0] & 0x2)
-      printString("Right button is pressed!");
-    if (mouse_bytes[0] & 0x1)
-      printString("Left button is pressed!");
-    // do what you want here, just replace the puts's to execute an action for each button
-    
-  }
-}
 
-void mouse_Handler() 
-{
-  unsigned char mouse_cycle=0;
-  signed char mouse_byte[3];    //signed char
-  signed char mouse_x=0;         //signed char
-  signed char mouse_y=0;         //signed char
 
-  switch(mouse_cycle)
-  {
-    
-    case 0:
-      mouse_byte[0]=read_port(0x60);
-      if(mouse_byte[0] & 0x4){
-        printString("Middle button");
-      }
-      if(mouse_byte[0] & 0x2){
-        printString("Right button");
-      }
-      if(mouse_byte[0] & 0x1){
-        printString("Left button");
-      }
-      mouse_cycle++;
-      break;
-    case 1:
-    printChar(mouse_byte[0]);
-    printChar(mouse_byte[1]);
-    printChar(mouse_byte[2]);
-      mouse_byte[1]=read_port(0x60);
-      mouse_x=mouse_byte[1];
-      mouse_cycle++;
-      break;
-    case 2:
-      mouse_byte[2]=read_port(0x60);
-      mouse_y=mouse_byte[2];
-      mouse_cycle=0;
-      break;
-  }
-}
 
-uint8_t mouse_cycle = 0;
-int8_t  mouse_byte[3];
 
-static int x=10;
-static int y=10;
-static int xo=0;
-static int yo=0;
-static int xf=0;
-static int yf=0;
-static int select_flag=0;
 
 
 void mouse_handle() {
@@ -231,9 +167,9 @@ void mouse_handle() {
             packet.buttons |= MIDDLE_CLICK;
             }
             if (!(mouse_byte[0] & 0x20))
-              packet.y_difference=-(packet.y_difference); //delta-y is a negative value
+              packet.y_difference=-1*(packet.y_difference); //delta-y is a negative value
             if (!(mouse_byte[0] & 0x10))
-              packet.x_difference =-(packet.x_difference); //delta-x is a negative value
+              packet.x_difference =-1*(packet.x_difference); //delta-x is a negative value
             mouse_packet_handler(packet);
 
             // //udrawMouse(y,x);
@@ -255,21 +191,21 @@ void mouse_handle() {
 void mouse_packet_handler(mouse_device_packet_t packet){
   update_cursor(packet.x_difference,packet.y_difference);
   if(packet.buttons == LEFT_CLICK){
-    printString("Left Button");
+    //printString("Left Button");
   }
   if(packet.buttons == RIGHT_CLICK){
-    printString("Right Button");
+    //printString("Right Button");
   }
   if(packet.buttons == MIDDLE_CLICK){
-    printString("Middle Button");
+    //printString("Middle Button");
   }
 }
 
 int cap_movement(int number){
   int n=0;
-  if(number > 10){
+  if(number > 100){
     n++;
-    number=number-10;
+    number=number-100;
   }
   return n;
 }

@@ -1,5 +1,3 @@
-/* la idea es generar un contexto para cada modulo que se ejecute, ocn un modulo de shell contexto 0 ejecutado por default. cada vez que llamemos a un modulo crearemos un nuevo contexto que copiara directamente dela direccion donde esta cargado el modulo a la direccion fisica que elegiremos ( asignaremos direcciones por pagina). los modulos nuevos se ejecutaran desde la shell y volveran a esta, pudiendo invocar shell anidadas.*/
-
 
 
 #include <stdint.h>
@@ -26,12 +24,10 @@ static const uint64_t PageSize = 0x1000;
 
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
-static void * const shellAddress = (void*)0x600000; // elijo una posicion de memoria que no voy a pisar
-//static void * const superUserAddress= (void*)0x700000;
-static void * const fortuneAddress= (void*) 0x700000;
-static void * const dummyAddress= (void*) 0x800000;
-static void * const currentAddress = (void*)0xA00000; // address logico donde compila nuestro modulo
-
+static void * const shellAddress = (void*)0xA00000; // elijo una posicion de memoria que no voy a pisar
+static void * const superUserAddress= (void*)0x600000;
+static void * const currentAddress = (void*)0x700000; // address logico donde compila nuestro modulo
+static void * const dumbModuleAddress = (void*)0x800000;
 
 typedef int (*EntryPoint)();
 typedef int (*EntryPointS)(int);
@@ -71,8 +67,8 @@ void * initializeKernelBinary()
 		sampleCodeModuleAddress,
 		sampleDataModuleAddress,
 		shellAddress,
-		fortuneAddress,
-		dummyAddress
+		superUserAddress,
+		dumbModuleAddress
 
 	};
 
@@ -108,14 +104,14 @@ void * initializeKernelBinary()
 
 //Copio el modulo a la direccion de memoria donde se correra el codigo
 void copy_mod(uint64_t mod_addr){
-	memcpy(currentAddress, mod_addr, PageSize);
+	memcpy(currentAddress, mod_addr, PageSize*2);
 }
 
  /* mapeo de los modulos a una direccion fisica para correr */
 void mapModules(uint64_t  phys_addr ){
  		uint64_t * PDbase= (uint64_t*) 0x10000; // base del page direc
  		uint64_t * userEntry= PDbase + 4;
- 		*userEntry= phys_addr + 0x8F;// + 0x8B;
+ 		*userEntry= phys_addr+0x8F;// + 0x8B;
  		return;
 
 }
@@ -157,14 +153,15 @@ int main()
 	initialize_Mouse();
 	initialize_cursor();
 
+
 	sti();
+	//page_enable();
 	saveCR3();
 	clear();
 
 	//initializeKernelBinary();
 	//clear();
-
-	//flow_manager();
+	flow_manager();
 
 	//clear();
 	
@@ -181,37 +178,50 @@ void flow_manager(){
 	int loop ;
 	int mod;
 	while(1){
-		printString( " Welcome to gatOS, please input the module number you would like to run.\n        1- sampleCodeModule\n        2-Shell Module\n        3-SuperUser Module\n");
+		printString( " Welcome to gatOS, please input the module number you would like to run.\n        1- sampleCodeModule\n        2-Shell Module\n        3-SuperUser Module\n        4-Dumb Module\n");
 		loop=1;
 		while( loop ){
 			mod=choose_mod(poll_keyboard_buffer(option,1));
 			switch(mod){
 				case 1:
 					printString("enter 1\n");
+					mapModules((uint64_t) sampleCodeModuleAddress);
 					//copy_mod(sampleCodeModuleAddress);
-					((EntryPoint)sampleCodeModuleAddress)(); // supuestamente de esta manera corremos el modulo
+					//saveCR3();
+					((EntryPoint)currentAddress)(); 
 					loop=0;
 					break;
 				case 2:
-				printString("enter 2\n");
-					copy_mod(shellAddress);
-					mapModules((void*)shellAddress);
+					printString("enter 2\n");
+					//copy_mod(shellAddress);
+					mapModules((uint64_t)shellAddress);
+					//saveCR3();
 					ncPrintHex(shellAddress);
 					printChar('\n');
 					ncPrintHex(currentAddress);
 					printChar('\n');
 					//run_mod(shellAddress);
-					((EntryPoint)shellAddress)();
+					((EntryPoint)currentAddress)();
 					//shell();
 					loop=0;
 					break;
 				case 3:
-				printString("enter 3\n");
-				mapModules((void *)fortuneAddress);
-				((EntryPoint)fortuneAddress)();
+					printString("enter 3\n");
+					//copy_mod(superUserAddress);
+					mapModules((uint64_t)superUserAddress);
+					//saveCR3();
+					((EntryPoint)currentAddress)();
 					//copy_mod(superUserAddress);
 					//((EntryPoint)superUserAddress)();
 					//superUser();
+					loop=0;
+					break;
+				case 4:
+					printString("enter 4\n");
+					mapModules((uint64_t)dumbModuleAddress);
+					//copy_mod(dumbModuleAddress);
+					//saveCR3();
+					((EntryPoint)currentAddress)();
 					loop=0;
 					break;
 				default:
@@ -228,6 +238,8 @@ int choose_mod(char c){
 		return 2;
 	if(c == '3')
 		return 3;
+	if(c== '4')
+		return 4;
 	return 0;
 }
 

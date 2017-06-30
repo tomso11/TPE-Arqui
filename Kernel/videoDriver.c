@@ -24,7 +24,9 @@ void printString(const char * string){
 }
 
 void initialize_cursor(){
+
 	update_cursor(0, 0);
+	
 }
 
 
@@ -44,6 +46,9 @@ void printChar(char character){
 	if( character == '\n'){
 		newline();
 		return;
+	}
+	else{
+		*(currentVideo+1)=0x0F;
 	}
 	*currentVideo = character;
 	currentVideo += 2;
@@ -68,11 +73,11 @@ void clear(){
 
  	int x=cursor_x+col;
  	int y=cursor_y+row;
- 	if(x>width*2){
- 		x=160;
+ 	if(x>width){
+ 		x=80;
  	}
  	if(y>height){
- 		y=25;
+ 		y=24;
  	}
  	if(x<0){
  		x=0;
@@ -80,20 +85,19 @@ void clear(){
  	if(y<0){
  		y=0;
  	}
-    unsigned short position=(y*80) + x;
- 
+    
  	udrawMouse(cursor_y,cursor_x);
  	drawMouse(x,y);
- 	printString("\nMoved from:");
- 	ncPrintDec(cursor_x);
- 	printChar(' ');
- 	ncPrintDec(cursor_y);
- 	printChar('\n');
- 	printString("to:");
- 	ncPrintDec(x);
- 	printChar(' ');
- 	ncPrintDec(y);
- 	printChar('\n');
+ 	// printString("\nMoved from:");
+ 	// ncPrintDec(cursor_x);
+ 	// printChar(' ');
+ 	// ncPrintDec(cursor_y);
+ 	// printChar('\n');
+ 	// printString("to:");
+ 	// ncPrintDec(x);
+ 	// printChar(' ');
+ 	// ncPrintDec(y);
+ 	// printChar('\n');
     // // cursor LOW port to vga INDEX register
     // write_port(0x3D4, 0x0F);
     // write_port(0x3D5, (unsigned char)(position&0xFF));
@@ -104,6 +108,13 @@ void clear(){
     cursor_y=y;
 
  }
+
+ // void initialize_screen(){
+	// int i;
+ // 	for(i=1; i<4000 ; i=i+2){
+ // 		*(video+i)=0x0F;
+ // 	}
+ // }
 
 /* Realiza la seleccion del mouse. */
 
@@ -134,17 +145,17 @@ void undoSelection(int finit, int cinit, int ffin, int cfin){
 /*dibuja el cursor*/
 
 void drawMouse(int c, int f){
-	if(!validPosition(c,f)) return;
-		printString("\nDrawing to:");
-		ncPrintDec(c);
-		printChar(' ');
-		ncPrintDec(f*width*2);
-		printChar('\n');
-	*(video+(c)+(f*width*2)+1)=(char) 0x30;
+	//if(!validPosition(c,f)) return;
+		// printString("\nDrawing to:");
+		// ncPrintDec(c*2);
+		// printChar(' ');
+		// ncPrintDec(f*79*2);
+		// printChar('\n');
+	*(video+(c*2)+(f*79*2)+1)=(char) 0x30; // cursor celeste
 }
 void udrawMouse(int f, int c){
-	if(!validPosition(f,c)) return;
-	*(video+(c)+(f*width*2)+1)=(char) 0x0F; // fondo negro con blanco como texto
+	//if(!validPosition(f,c)) return;
+	*(video+(c*2)+(f*79*2)+1)=(char) 0x0F; // fondo negro con blanco como texto
 }
 
 /* Chequea que sea una posicion valida en pantalla para realizar la copia*/

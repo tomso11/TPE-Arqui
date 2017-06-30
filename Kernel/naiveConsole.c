@@ -21,6 +21,7 @@ void ncPrintChar(char character)
 {
 	set_nccursor(get_vdcursor());
 	*currentVideo = character;
+	*(currentVideo+1)=0x0F;
 	currentVideo += 2;
 	set_vdcursor(get_nccursor());
 }

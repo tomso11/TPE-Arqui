@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 void printChar(char c);
+void initialize_screen();
 void printString(char* string);
 void clear();
 unsigned char* get_vdcursor(void);
