@@ -5,7 +5,7 @@
 //#include "driverVideo.h" //debug
 
 int main(){
-	//printString("entershell");
+	putstring("entershell");
 	shell();
 	return 0;
 }

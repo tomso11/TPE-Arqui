@@ -24,8 +24,8 @@ static const uint64_t PageSize = 0x1000;
 
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
-static void * const shellAddress = (void*)0xA00000; // elijo una posicion de memoria que no voy a pisar
-static void * const superUserAddress= (void*)0x600000;
+static void * const shellAddress = (void*)0x600000; // elijo una posicion de memoria que no voy a pisar
+static void * const superUserAddress= (void*)0xA00000;
 static void * const currentAddress = (void*)0x700000; // address logico donde compila nuestro modulo
 static void * const dumbModuleAddress = (void*)0x800000;
 
@@ -65,9 +65,7 @@ void * initializeKernelBinary()
 	ncNewline();
 	void * moduleAddresses[] = { //cargamos los modulos en memoria 
 		sampleCodeModuleAddress,
-		sampleDataModuleAddress,
-		shellAddress,
-		superUserAddress,
+		sampleDataModuleAddress,superUserAddress,shellAddress,
 		dumbModuleAddress
 
 	};
@@ -104,7 +102,7 @@ void * initializeKernelBinary()
 
 //Copio el modulo a la direccion de memoria donde se correra el codigo
 void copy_mod(uint64_t mod_addr){
-	memcpy(currentAddress, mod_addr, PageSize*2);
+	memcpy((void*)currentAddress, (void*)mod_addr, PageSize);
 }
 
  /* mapeo de los modulos a una direccion fisica para correr */
@@ -152,15 +150,22 @@ int main()
 
 	initialize_Mouse();
 	initialize_cursor();
+	printChar('\n');
 
 
 	sti();
 	//page_enable();
 	saveCR3();
-	clear();
+	//clear();
+	ncPrintHex(&endOfKernel);
+	printChar('\n');
+	ncPrintHex(&endOfKernelBinary);
+	printChar('\n');
+	ncPrintHex(&bss);
+	printChar('\n');
 
 	//initializeKernelBinary();
-	//clear();
+	clear();
 	flow_manager();
 
 	//clear();
@@ -178,50 +183,50 @@ void flow_manager(){
 	int loop ;
 	int mod;
 	while(1){
-		printString( " Welcome to gatOS, please input the module number you would like to run.\n        1- sampleCodeModule\n        2-Shell Module\n        3-SuperUser Module\n        4-Dumb Module\n");
+		printString( "Welcome to gatOS, please input the module number you would like to run.\n        1- SampleCode Module\n        2-Shell Module\n        3-SuperUser Module\n        4-Dumb Module\n");
 		loop=1;
 		while( loop ){
 			mod=choose_mod(poll_keyboard_buffer(option,1));
 			switch(mod){
 				case 1:
 					//printString("enter 1\n");
-					mapModules((uint64_t) sampleCodeModuleAddress);
-					//copy_mod(sampleCodeModuleAddress);
+					//mapModules((uint64_t) sampleCodeModuleAddress);
+					copy_mod((uint64_t)sampleCodeModuleAddress);
 					//saveCR3();
-					((EntryPoint)currentAddress)(); 
+					((EntryPoint)sampleCodeModuleAddress)(); 
 					loop=0;
 					break;
 				case 2:
 					//printString("enter 2\n");
-					//copy_mod(shellAddress);
-					mapModules((uint64_t)shellAddress);
+					//copy_mod((uint64_t)shellAddress);
+					mapModules((uint64_t)superUserAddress);
 					//saveCR3();
 					//ncPrintHex(shellAddress);
 					//printChar('\n');
 					//ncPrintHex(currentAddress);
 					//printChar('\n');
 					//run_mod(shellAddress);
-					((EntryPoint)currentAddress)();
+					//((EntryPoint)0x109261)();
+					((EntryPoint)superUserAddress)();
 					//shell();
 					loop=0;
 					break;
 				case 3:
-					//printString("enter 3\n");
-					//copy_mod(superUserAddress);
-					mapModules((uint64_t)superUserAddress);
+					printString("enter 3\n");
+					//copy_mod((uint64_t)superUserAddress);
+					mapModules((uint64_t)shellAddress);
 					//saveCR3();
-					((EntryPoint)currentAddress)();
+					//((EntryPoint)0x1071FD)();
 					//copy_mod(superUserAddress);
-					//((EntryPoint)superUserAddress)();
+					((EntryPoint)shellAddress)();
 					//superUser();
 					loop=0;
 					break;
 				case 4:
 					//printString("enter 4\n");
+					//copy_mod((uint64_t)dumbModuleAddress);
 					mapModules((uint64_t)dumbModuleAddress);
-					//copy_mod(dumbModuleAddress);
-					//saveCR3();
-					((EntryPoint)currentAddress)();
+					((EntryPoint)dumbModuleAddress)();
 					loop=0;
 					break;
 				default:

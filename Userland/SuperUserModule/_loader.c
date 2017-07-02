@@ -1,6 +1,5 @@
 /* _loader.c */
 #include <stdint.h>
-#include <superUser.h>
 
 extern char bss;
 extern char endOfBinary;
@@ -10,8 +9,10 @@ int main();
 void * memset(void * destiny, int32_t c, uint64_t length);
 
 int _start() {
-	char * v=0xB8000; //try
-	*v='x';
+	//char * v=0xB8000; //try
+	//int i;
+	//for(i=0;i<4000; i++)
+	//	*(v+i)='x';
 	//Clean BSS
 	memset(&bss, 0, &endOfBinary - &bss);
 

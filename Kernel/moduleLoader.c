@@ -6,11 +6,16 @@
 static void loadModule(uint8_t ** module, void * targetModuleAddress);
 static uint32_t readUint32(uint8_t ** address);
 
+// payload=EOK , tgt = moduleAddresses
 void loadModules(void * payloadStart, void ** targetModuleAddress)
 {
 	int i;
 	uint8_t * currentModule = (uint8_t*)payloadStart;
 	uint32_t moduleCount = readUint32(&currentModule);
+	// ncPrint("\n");
+	// ncPrint("Module Count: ");
+	// ncPrintDec(moduleCount);
+	// ncPrint("\n");
 
 	for (i = 0; i < moduleCount; i++)
 		loadModule(&currentModule, targetModuleAddress[i]);
@@ -38,6 +43,10 @@ static void loadModule(uint8_t ** module, void * targetModuleAddress)
 static uint32_t readUint32(uint8_t ** address)
 {
 	uint32_t result = *(uint32_t*)(*address);
+	// ncPrint("\n");
+	// ncPrint("Module Count: ");
+	// ncPrintDec(result);
+	// ncPrint("\n");
 	*address += sizeof(uint32_t);
 	return result;
 }

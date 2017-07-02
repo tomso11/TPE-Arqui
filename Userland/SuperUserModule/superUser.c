@@ -3,9 +3,6 @@ char * v = (char*)0xB8000 + 79 * 2;
 
 int main(){
 
-	*v = 'X';
-	*(v+2000) = 'X';
-
 	superUser();
 	
 	return 0;
