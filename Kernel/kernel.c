@@ -25,9 +25,9 @@ static const uint64_t PageSize = 0x1000;
 static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
 static void * const shellAddress = (void*)0x600000; // elijo una posicion de memoria que no voy a pisar
-static void * const superUserAddress= (void*)0xA00000;
+static void * const superUserAddress= (void*)0x800000;
 static void * const currentAddress = (void*)0x700000; // address logico donde compila nuestro modulo
-static void * const dumbModuleAddress = (void*)0x800000;
+static void * const dumbModuleAddress = (void*)0xA00000;
 
 typedef int (*EntryPoint)();
 typedef int (*EntryPointS)(int);
@@ -65,7 +65,7 @@ void * initializeKernelBinary()
 	ncNewline();
 	void * moduleAddresses[] = { //cargamos los modulos en memoria 
 		sampleCodeModuleAddress,
-		sampleDataModuleAddress,superUserAddress,shellAddress,
+		sampleDataModuleAddress,shellAddress,superUserAddress,
 		dumbModuleAddress
 
 	};
@@ -199,7 +199,7 @@ void flow_manager(){
 				case 2:
 					//printString("enter 2\n");
 					//copy_mod((uint64_t)shellAddress);
-					mapModules((uint64_t)superUserAddress);
+					mapModules((uint64_t)shellAddress);
 					//saveCR3();
 					//ncPrintHex(shellAddress);
 					//printChar('\n');
@@ -207,18 +207,18 @@ void flow_manager(){
 					//printChar('\n');
 					//run_mod(shellAddress);
 					//((EntryPoint)0x109261)();
-					((EntryPoint)superUserAddress)();
+					((EntryPoint)shellAddress)();
 					//shell();
 					loop=0;
 					break;
 				case 3:
 					printString("enter 3\n");
 					//copy_mod((uint64_t)superUserAddress);
-					mapModules((uint64_t)shellAddress);
+					mapModules((uint64_t)superUserAddress);
 					//saveCR3();
 					//((EntryPoint)0x1071FD)();
 					//copy_mod(superUserAddress);
-					((EntryPoint)shellAddress)();
+					((EntryPoint)superUserAddress)();
 					//superUser();
 					loop=0;
 					break;

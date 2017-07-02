@@ -2,7 +2,7 @@ include Makefile.inc
 
 SAMPLE_DATA=0001-sampleDataModule.bin
 
-all: sampleCodeModule sampleDataModule shellModule superUserModule dumbModule
+all: sampleCodeModule sampleDataModule superUserModule shellModule dumbModule
 
 sampleCodeModule:
 	cd SampleCodeModule; make
