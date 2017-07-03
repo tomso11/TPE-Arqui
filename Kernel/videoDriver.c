@@ -14,6 +14,7 @@ static const unsigned int width = 80;
 static const unsigned int height = 25;
 static unsigned char cursor_x=0;
 static unsigned char cursor_y=0;
+static char mouse_buffer[4000];
 
 void printString(const char * string){
 	int i;
@@ -122,6 +123,7 @@ void selection(int finit, int cinit, int ffin, int cfin){
  
 	int i= finit*width+ cinit;
 	int fin= ffin*width+cfin;
+	copyMouse(i,fin);
 	while(validPosition(i/width,i%width) && i<=fin ){
 
 		drawMouse(i/width,i%width);
@@ -145,7 +147,7 @@ void undoSelection(int finit, int cinit, int ffin, int cfin){
 /*dibuja el cursor*/
 
 void drawMouse(int c, int f){
-	//if(!validPosition(c,f)) return;
+	if(!validPosition(c,f)) return;
 		// printString("\nDrawing to:");
 		// ncPrintDec(c*2);
 		// printChar(' ');
@@ -156,6 +158,26 @@ void drawMouse(int c, int f){
 void udrawMouse(int f, int c){
 	//if(!validPosition(f,c)) return;
 	*(video+(c*2)+(f*79*2)+1)=(char) 0x0F; // fondo negro con blanco como texto
+}
+
+void copyMouse(int initial, int end){
+	int size=end-initial+1;
+	int i;
+	int n=0;
+	for(i=0; i<size; i++){
+		mouse_buffer[n++]=*(video+end-i*2);
+	}
+	mouse_buffer[n]='\0';
+	return;
+}
+
+void paste(){
+	int i;
+	for (i=0; mouse_buffer[i]!= '\0' ; i++){
+		printChar(mouse_buffer[i]);
+	}
+	mouse_buffer[0]='\0';
+	return;
 }
 
 /* Chequea que sea una posicion valida en pantalla para realizar la copia*/

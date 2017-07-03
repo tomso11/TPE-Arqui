@@ -167,9 +167,9 @@ void mouse_handle() {
             packet.buttons |= MIDDLE_CLICK;
             }
             if ((mouse_byte[0] & 0x20)==0x20)
-              packet.y_difference=-1*(packet.y_difference); //delta-y is a negative value
+              packet.y_difference=mouse_byte[2] | 0xFFFFFF00; //delta-y is a negative value
             if ((mouse_byte[0] & 0x10)==0x10)
-              packet.x_difference =-1*(packet.x_difference); //delta-x is a negative value
+              packet.x_difference =mouse_byte[1] | 0xFFFFFF00; //delta-x is a negative value
             mouse_packet_handler(packet);
 
             // //udrawMouse(y,x);
@@ -194,6 +194,7 @@ void mouse_packet_handler(mouse_device_packet_t packet){
     //printString("Left Button");
   }
   if(packet.buttons == RIGHT_CLICK){
+    paste();
     //printString("Right Button");
   }
   if(packet.buttons == MIDDLE_CLICK){
