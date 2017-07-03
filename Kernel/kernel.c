@@ -102,13 +102,13 @@ void * initializeKernelBinary()
 
 //Copio el modulo a la direccion de memoria donde se correra el codigo
 void copy_mod(uint64_t mod_addr){
-	memcpy((void*)currentAddress, (void*)mod_addr, PageSize);
+	memcpy((void*)currentAddress, (void*)mod_addr, PageSize*3);
 }
 
  /* mapeo de los modulos a una direccion fisica para correr */
 void mapModules(uint64_t  phys_addr ){
  		uint64_t * PDbase= (uint64_t*) 0x10000; // base del page direc
- 		uint64_t * userEntry= PDbase + 4;
+ 		uint64_t * userEntry= PDbase + 8;
  		*userEntry= phys_addr+0x8F;// + 0x8B;
  		return;
 
@@ -213,7 +213,7 @@ void flow_manager(){
 					loop=0;
 					break;
 				case 3:
-					printString("enter 3\n");
+					//printString("enter 3\n");
 					copy_mod((uint64_t)superUserAddress);
 					mapModules((uint64_t)currentAddress);
 					//saveCR3();
