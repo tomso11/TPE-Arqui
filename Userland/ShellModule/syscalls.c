@@ -39,5 +39,6 @@ int time(int selector) {
 }
 /* Syscall Clear Screen */
 void clear_screen(){
+    clearC();
 	//return _int80h(8, 0, 0, 0);
 }

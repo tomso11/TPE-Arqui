@@ -168,7 +168,7 @@ static void buffil() {
 
 
 int usr_clear(){
-	//clear();
+	clear_screen();
 }
 
 void * my_malloc(int bytes){

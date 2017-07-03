@@ -53,6 +53,7 @@ int shell(){
 				if(index!=0){
     				index--;
     				buffer[index]='\0';
+    				putchar('\b');
 				//backspace();
 
     				
