@@ -190,43 +190,45 @@ void flow_manager(){
 			switch(mod){
 				case 1:
 					//printString("enter 1\n");
-					//mapModules((uint64_t) sampleCodeModuleAddress);
 					copy_mod((uint64_t)sampleCodeModuleAddress);
+					mapModules((uint64_t) currentAddress);
 					//saveCR3();
-					((EntryPoint)sampleCodeModuleAddress)(); 
+					//((EntryPoint)sampleCodeModuleAddress)(); 
+					((EntryPoint)currentAddress)();
 					loop=0;
 					break;
 				case 2:
 					//printString("enter 2\n");
-					//copy_mod((uint64_t)shellAddress);
-					mapModules((uint64_t)shellAddress);
+					copy_mod((uint64_t)shellAddress);
+					mapModules((uint64_t)currentAddress);
 					//saveCR3();
 					//ncPrintHex(shellAddress);
 					//printChar('\n');
 					//ncPrintHex(currentAddress);
 					//printChar('\n');
 					//run_mod(shellAddress);
-					//((EntryPoint)0x109261)();
-					((EntryPoint)shellAddress)();
+					((EntryPoint)currentAddress)();
+					//((EntryPoint)shellAddress)();
 					//shell();
 					loop=0;
 					break;
 				case 3:
 					printString("enter 3\n");
-					//copy_mod((uint64_t)superUserAddress);
-					mapModules((uint64_t)superUserAddress);
+					copy_mod((uint64_t)superUserAddress);
+					mapModules((uint64_t)currentAddress);
 					//saveCR3();
-					//((EntryPoint)0x1071FD)();
+					((EntryPoint)currentAddress)();
 					//copy_mod(superUserAddress);
-					((EntryPoint)superUserAddress)();
+					//((EntryPoint)superUserAddress)();
 					//superUser();
 					loop=0;
 					break;
 				case 4:
 					//printString("enter 4\n");
-					//copy_mod((uint64_t)dumbModuleAddress);
-					mapModules((uint64_t)dumbModuleAddress);
-					((EntryPoint)dumbModuleAddress)();
+					copy_mod((uint64_t)dumbModuleAddress);
+					mapModules((uint64_t)currentAddress);
+					//((EntryPoint)dumbModuleAddress)();
+					((EntryPoint)currentAddress)();
 					loop=0;
 					break;
 				default:

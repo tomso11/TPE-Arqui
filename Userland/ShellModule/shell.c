@@ -28,11 +28,11 @@ static void printErrorMsg(int error){
 }
 
 
-
+static int loop = 1;
 
 int shell(){
 
-	int loop = 1;
+	
 	char buffer[BUFF_SIZE];
 	int index=0;
 	int error=0;
@@ -130,10 +130,14 @@ int parsebuffer(char * buffer){
 		putstring("echo - imprime en pantalla todos los argumentos que reciba");
 		putchar('\n');
 		putstring("clear - limpia la pantalla"); 
+		putchar('\n');
+		putstring("exit- sale del modulo");
+		putchar('\n');
 			
 
-	}else if(comp_str(commando, "currentTime")){
-		// ejecutar currentTime();
+	}else if(comp_str(commando, "exit")){
+		putstring("\n Exiting Shell Module\n");
+		loop=0;
 	}else{
 		
 		bufferClean(commando);
