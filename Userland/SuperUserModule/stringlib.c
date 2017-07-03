@@ -49,14 +49,19 @@ int str_len(const char *str) {
 }
 
 int comp_str(const char* s, const char *t){
-	int n =0 ;
-	while( s[n]!='\0' && (s[n]==t[n]) ){
-		n++;
-	}
-	if(s[n]){
-		return 0;
-	}
-	else{
-		return 1;
-	}
+
+	while (*s == *t) {
+      if (*s == '\0' || *t == '\0')
+         break;
+ 
+      s++;
+      t++;
+   }
+ 
+   if (*s == '\0' && *t == '\0')
+      return 1;
+   else
+      return 0;
+
+	
 }

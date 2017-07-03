@@ -1,6 +1,6 @@
 #include "ctype.h"
 #include "stdlib.h"
-#include <stringlib.h>
+#include "stringlib.h"
 #include "stdio.h"
 #include "syscalls.h"
 
@@ -19,12 +19,13 @@
 
 static unsigned char buff[BUFF_SIZE];
 static int index = 0;
+static void * position = 0x7000000; //para malloc
 
 /* Imprime un caracter en el descriptor indicado */
 void fputchar(unsigned int fds, int c) {
-	char * buff;
-	*buff=c;
-	write(fds, buff, 1); //syscall
+	//char * buff;
+	//*buff=c;
+	write(fds, c, 1); //syscall
 }
 
 /* Imprime un caracter a salida estándar */
@@ -33,6 +34,7 @@ void putchar(int c) {
 }
 
 void putstring(char * str){
+	
 	prints(STDOUT,str);
 }
 
@@ -111,7 +113,6 @@ int readRow(char *str, unsigned int maxlen) {
 }
 
 
-
 int super_getchar(){
 	char * getch=my_malloc(1);
 	*getch=0;
@@ -130,6 +131,7 @@ int super_getchar(){
 
 /*Lee del buffer hasta '\n' caso en el cual lo marca como vacio. Si esta vacio el buffer lo llena.*/
  char getchar(char * buff) {
+ 	char ans;
 	 char * getch=my_malloc(1);
 	*getch=0;
 	while (*getch == 0){
@@ -146,7 +148,9 @@ int super_getchar(){
  //    unsigned char c = buff[index++]; // Se lee caracter del buffer
  //    if (c == '\n' || index== BUFF_SIZE)
  //    	index = 0;  // reset buffer
-    return *getch;
+	ans=*getch;
+	my_free(1);
+    return ans;
 }
 
 /* Llena el buffer hasta un '\n' o hasta que se termine su capacidad */
@@ -163,14 +167,18 @@ static void buffil() {
 }
 
 
-
-// int usr_clear(){
-// 	clear();
-// }
+int usr_clear(){
+	//clear();
+}
 
 void * my_malloc(int bytes){
-	static void * position = 0x7000000;
+	
 	void * aux = position;
 	position+=bytes;
 	return aux;
+}
+
+void my_free(int bytes){
+	position= position - bytes;
+	return;
 }

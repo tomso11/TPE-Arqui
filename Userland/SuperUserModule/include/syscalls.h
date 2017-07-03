@@ -10,7 +10,7 @@ void writeC(char * msg, int size);
 
 
 int read(unsigned int fd, char *buff, unsigned int bytes);
-int write(unsigned int fd, void *buff, unsigned int bytes);
+int write(unsigned int fd, char buff, unsigned int bytes);
 void * res (unsigned int bytes);
 void * data_dir();
 int time(int selector);

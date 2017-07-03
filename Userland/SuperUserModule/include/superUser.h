@@ -2,6 +2,6 @@
 #define _SUPERUSER_H_
 
 int main();
-void superUser();
+
 
 #endif

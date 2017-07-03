@@ -4,6 +4,8 @@ GLOBAL sys_call
 
 section .text
 
+; Se llaman desde syscalls.c, y realizan la interrupcion 80h que sera atendida por la irq80Handler en libasm
+
 readC:
 	push rbp
 	mov rbp, rsp
@@ -26,6 +28,9 @@ writeC:
 	mov rsp, rbp
 	pop rbp
 	ret
+
+;Syscall generico
+
 sys_call:
 	push rbp
 	mov rbp, rsp
