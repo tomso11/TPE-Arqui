@@ -6,6 +6,8 @@
 #define OK 0
 #define NOT_EXIST 1
 #define ERROR_ARGS 2
+#define MAX_ARGS 3
+#define MAX_ARG_LEN 15
 
 typedef struct {
 	char * command;  /* Nombre del comando */
@@ -13,19 +15,15 @@ typedef struct {
 	int args_num;
 } command_t;
 
-#include "stdio.h"
+#include <stdio.h>
 #include <stdint.h>
 
 int shell();
 
-static int interpret(const char * buffer, char * command);
+void echon(char * buffer, int index);
 
-static void printErrorMsg(int error);
+int parsebuffer(char * buffer);
 
-/* come espacios y aplica los backspace */
-static void cleanBuffer(char* buffer);
-
-/* Toma el input y separa el comando y los argumentos .*/
-static command_t parseCmd( const char * buffer );
+void bufferClean (char * buffer);
 
 #endif

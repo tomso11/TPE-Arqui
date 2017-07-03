@@ -1,149 +1,163 @@
 #include "stdio.h"
 #include "shellcommands.h"
 #include "shell.h"
+#include "stringlib.h"
 
 //#include "driverVideo.h" //debug
 
-int main(){
-	putstring("entershell");
-	shell();
-	return 0;
-}
-int shell(){
-	//printString("entershell");
-	int loop=1;
-	char buff[BUFF_SIZE];
-	int commandlen;
-	char command[BUFF_SIZE];
-	int hasarguments=0;
-	int error;
+//static int buff_idx=0; //variable para recorrer el buffer que se reinicia en cada loop
 
-	int i=0;
-	char c;
-	int s;
-	command_t cmd;
-	
+#define NAME_MAX 11
 
-	//
-	//load en pantalla ?
-	//
 
-	
-	while(loop ){
-		putstring("[User@gatOS]$  ");
-
-		//printf("%s", "[User@gatOS]$  ");
-		//while ( (getchar( (buff+i) )) != '\n'){
-		while( (s=super_getchar()) != '\n' ){
-			//printChar(( char)s);
-			if(i == BUFF_SIZE){
-				i = 0;
-			}
-			//buff[i]=s;
-			//printChar(s);
-			//putchar(s);
-			i++;
-				if(i > 0)
-					//printChar(buff[i-1]);
-			
-			if( c != -1 ){
-			}
-			// ncPrintDec(c);
-			// ncPrintChar(' ');
-			// putchar(c);
-			// putchar(c);
-		}
-		//printString("does it stop");
-		putchar('\n');
-		cleanBuffer(buff);
-		cmd = parseCmd(buff);
-		error = execute_cmd(cmd);
-		printErrorMsg(error);
-	}
-	// while(loop){
-	// 	printString("[User@gatOS]$ ");
-	// 	readRowAndClear(buff, len);
-	// 	if(buff[0] != '\0'){
-	// 		commandlen = interpret(buff, command);
-	// 		if(buff[commandlen] != '\0'){
-	// 			hasarguments = 1 ;
-	// 		}	
-	// 		error = executeCommand(command, buff+commandlen+hasarguments);
-	// 		printErrorMsg(error);
-	// 	}
-	// }
-
-	return 0;
-}
-
-static int interpret(const char * buffer, char * command){
-	int i;
-	for (i=0; buffer[i]!='\0' && buffer[i]!=' '; i++){
-		command[i]=buffer[i];
-	}
-	command[i]= '\0';
-	return i;
-}
 
 static void printErrorMsg(int error){
 	switch(error){
 		case ERROR_ARGS:
-			printf("%s", "Invalid arguments \n");
+			//printf("%s", "Invalid arguments \n");
+			putstring("Invalid args \n");
 			break;
 		case NOT_EXIST:
-			printf("%s", "Command does not exist" );
+			//printf("%s", "Command does not exist" );
+			putstring("Command does not exist\n");
+			break;
+		case OK:
 			break;
 	}
 
 }
 
-/* come espacios y aplica los backspace */
-static void cleanBuffer(char* buffer){
-	int i;
-	int j;
-	for (i=0; buffer[i] != '\0' ; i++){
-		if( buffer[i] == '\b' ){
-			if(i != 0){
-				for(j=i; buffer[j+1] != '\0' ; j++ ){ // revisar para eficiencia
-					buffer[j]=buffer[j+2];
-				}
-				buffer[j]='\0';
+
+
+
+int shell(){
+
+	int loop = 1;
+	char buffer[BUFF_SIZE];
+	int index=0;
+	int error=0;
+	char c;
+	int first=1;
+	
+	while(loop){
+		
+		putchar('>');
+
+		while( (c=super_getchar()) != '\n' ){
+
+			if(index==BUFF_SIZE){
+				index=0;
 			}
-			else{
-				buffer[i]='\0';
-				return;
-			}
+
+			if(c=='\b'){
+				if(index!=0){
+    				index--;
+    				buffer[index]='\0';
+				//backspace();
+
+    				
+    			}
+    			} else {
+    				buffer[index]=c;
+    				index++;
+				putchar(c);
+				
+
+		  		}
+		
+
 		}
-		while( buffer[i] == ' ' ){ // come espacios
-			buffer[i]=buffer[i+1];
-		}
+
+		buffer[index]='\0';
+		error = parsebuffer(buffer);
+		putchar('\n');		
+		printErrorMsg(error);
+		putchar('\n');
+		index=0;	
+		bufferClean(buffer);
+		error=OK;
+		
+
+
+		
 	}
+
+	return 0;
 }
 
-/* Toma el input y separa el comando y los argumentos .*/
-static command_t parseCmd( const char * buffer ){
-	int i;
-	int j=0;
-	int n=0;
-	command_t cmd;
-	for ( i=0; buffer[i] != '\0'; i++ ){ //copia el command
-		if(buffer[i] == ' '){ //separa cmd de args
-			i++;
-			while(buffer[i] != '\0'){ //copia los args
-				if(buffer [i] == ' '){ //separa los args
-					cmd.args[n][j]='\0';
-					n++;
-					j=0;
-				}
-				cmd.args[n][j++]=buffer[i++];
-			}
-		}
-		cmd.command[i]=buffer[i];
-		if(cmd.command[i] == '\0'){ //puede que salga del while anidado con un '\0'
-			i--;
-		}
-	}
-	cmd.args_num=n;
-	return cmd;
+int main (){
+	shell();
+	return 0;
 }
 
+int parsebuffer(char * buffer){
+	char commando[NAME_MAX]; //el name max depende de cuales sean las funciones que usemos. Por ejemplo: echo, clear, currentTime, help - name max = 11
+	int index;
+
+	
+
+
+	for (index=0; buffer[index]!= ' ' && buffer[index]!='\0'; index++ ){
+		commando[index]=buffer[index];
+		if(index > NAME_MAX-1){
+			bufferClean(commando);
+			return NOT_EXIST; // por la funcion de printErrorMsg 		
+		}
+	}
+
+	if (comp_str(commando, "clear")){
+		if (buffer[index]!='\0'){
+			bufferClean(commando);
+			return ERROR_ARGS;
+			
+		}
+		return usr_clear();
+	
+	}else if(comp_str(commando, "echo")){
+		putchar('\n');
+		echon(buffer, index+1);
+	
+	} else if (comp_str(commando, "help")){
+		if (buffer[index]!='\0'){
+			bufferClean(commando);
+			return ERROR_ARGS;
+			
+		}
+		putchar('\n');
+		putstring("help - muestra los comandos disponibles");		
+		putchar('\n');
+		putstring("echo - imprime en pantalla todos los argumentos que reciba");
+		putchar('\n');
+		putstring("clear - limpia la pantalla"); 
+			
+
+	}else if(comp_str(commando, "currentTime")){
+		// ejecutar currentTime();
+	}else{
+		
+		bufferClean(commando);
+		return NOT_EXIST;
+		
+	}
+
+	//si un comando va a tener argumentos del estilo %s, imitar la estructura de esta funcion e ir encadenando. Aca es donde se manejaria el ERROR_ARGS
+	bufferClean(commando);
+	return OK;
+	
+}
+
+void echon(char * buffer, int index){
+
+	int i;
+	for (i=index; buffer[i]!= '\0'; i++){
+		putchar(buffer[i]);
+	}
+
+}
+
+void bufferClean(char * buffer){
+	int n;
+	for (n=0; buffer[n]!='\0'; n++){
+		buffer[n]='\0';
+	}	
+}

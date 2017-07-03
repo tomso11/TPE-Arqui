@@ -2,7 +2,7 @@
 #include "stdlib.h"
 #include "stringlib.h"
 #include "stdio.h"
-//#include "syscalls.h"
+#include "syscalls.h"
 
 //#include "driverVideo.h" //debug
 //#include "naiveConsole.h"
@@ -19,12 +19,13 @@
 
 static unsigned char buff[BUFF_SIZE];
 static int index = 0;
+static void * position = 0x7000000; //para malloc
 
 /* Imprime un caracter en el descriptor indicado */
 void fputchar(unsigned int fds, int c) {
-	char * buff;
-	*buff=c;
-	write(fds, buff, 1); //syscall
+	//char * buff;
+	//*buff=c;
+	write(fds, c, 1); //syscall
 }
 
 /* Imprime un caracter a salida estándar */
@@ -33,6 +34,7 @@ void putchar(int c) {
 }
 
 void putstring(char * str){
+	
 	prints(STDOUT,str);
 }
 
@@ -91,11 +93,6 @@ static int fprinttype(unsigned int fds, const char *format, va_list args) {
 }
 
 
-///*Imprime un número entero en la pantalla */
-//static int printi(unsigned int fds,int value, char aux[]) {
-//	itoa(value, aux, 10); // guarda en buffer el string del valor en base 10
-//	return prints(fds, aux);
-//}
 
 /*Imprime una cadena de carateres a pantalla */
 static int prints(unsigned int fds, const char *str) {
@@ -115,27 +112,6 @@ int readRow(char *str, unsigned int maxlen) {
     return i;
 }
 
-// /* Lee toda una linea de input y limpia si queda un espacio al final. */
-// int readRowAndClear(char *str, unsigned int maxlen) {
-// 	unsigned int i = 0;
-// 	int c;
-// 	char state = SPACE;
-// 	while ((c = getchar(str)) != '\n' && i < maxlen-1) {
-// 		if (state != SPACE) {
-// 			str[i++] = c;
-// 			if (isspace(c))
-// 				state = SPACE;
-// 		}
-// 		else if (!isspace(c)) {
-// 			str[i++] = c;
-// 			state = !SPACE;
-// 		}
-// 	}
-// 	if (i > 0 && isspace(str[i-1]))
-// 		i--;  // Se borra el utimo espacio si lo hay
-// 	str[i] = '\0';
-// 	return i;
-// }
 
 int super_getchar(){
 	char * getch=my_malloc(1);
@@ -155,6 +131,7 @@ int super_getchar(){
 
 /*Lee del buffer hasta '\n' caso en el cual lo marca como vacio. Si esta vacio el buffer lo llena.*/
  char getchar(char * buff) {
+ 	char ans;
 	 char * getch=my_malloc(1);
 	*getch=0;
 	while (*getch == 0){
@@ -171,7 +148,9 @@ int super_getchar(){
  //    unsigned char c = buff[index++]; // Se lee caracter del buffer
  //    if (c == '\n' || index== BUFF_SIZE)
  //    	index = 0;  // reset buffer
-    return *getch;
+	ans=*getch;
+	my_free(1);
+    return ans;
 }
 
 /* Llena el buffer hasta un '\n' o hasta que se termine su capacidad */
@@ -187,54 +166,19 @@ static void buffil() {
 
 }
 
-// /*Implementacion de scanf que acepta los simbolos d y s.*/
-// int scanf(const char *format, ...) {
-// 	int i, j, num;
-// 	int argc = 0;
-// 	int *p;
-// 	char *str;
-// 	char aux[BUFF_SIZE];
-// 	va_list args;
-// 	va_start(args, format);
 
-// 	readRow(aux, BUFF_SIZE);
-
-// 	for (i = j = 0; aux[j] != '\0' && format[i] != '\0'; i++, j++) {
-// 		if (format[i] == '%') {
-// 			i++;
-// 			if (format[i] == 'd') {
-// 				if(aux[j] != '+' && aux[j] != '-' && !isdigit(aux[j]))
-// 					return argc;
-// 				num = atoi(aux + j);
-// 				p = va_arg(args, int *);
-// 				*p = num;
-// 				while (isdigit(aux[j+1]))
-// 					j++;
-// 			}
-// 			else if (format[i] == 's') {
-// 				str = va_arg(args, char *);
-// 				strcpy(str, aux+j);
-// 				return argc+1;
-// 			}
-// 			else if (format[i] == '%' && aux[j++] != '%')
-// 				return argc;
-// 			argc++;
-// 		} 
-// 		else if (format[i] != aux[j])
-// 			return argc;
-// 	}
-
-// 	va_end(args);
-// 	return argc;
-// }
-
-// int usr_clear(){
-// 	clear();
-// }
+int usr_clear(){
+	//clear();
+}
 
 void * my_malloc(int bytes){
-	static void * position = 0x7000000;
+	
 	void * aux = position;
 	position+=bytes;
 	return aux;
+}
+
+void my_free(int bytes){
+	position= position - bytes;
+	return;
 }

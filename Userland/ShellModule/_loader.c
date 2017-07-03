@@ -11,10 +11,10 @@ void * memset(void * destiny, int32_t c, uint64_t length);
 
 int _start1() {
 	//Clean BSS
-	char * v=0xB8000; //try
-	int i;
-	for(i=0;i<4000; i++)
-		*(v+i)='x';
+	//char * v=0xB8000; //try
+	//int i;
+	//for(i=0;i<4000; i++)
+	//	*(v+i)='x';
 	memset(&bss, 0, &endOfBinary - &bss);
 	return main();
 
