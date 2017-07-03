@@ -63,7 +63,6 @@ void initialize_Mouse() {
 	//cuando prendo la computadora, el mouse esta desactivado
 	//y la informacion que proviene de el no va a generar interrupciones
 	//entonces debo activarlo
-	printString("Inicializando el mouse...");
 	char status;
 
 	mouse_wait(1); //espera hasta que el mouse pueda enviar/recibir comandos/data
@@ -116,6 +115,7 @@ void mouse_handle() {
           /* We now have a full mouse packet ready to use */
           if (mouse_byte[0] & 0x80 || mouse_byte[0] & 0x40) {
             /* x/y overflow? bad packet! */
+            mouse_cycle=4;
             break;
           }
           mouse_device_packet_t packet;
@@ -166,9 +166,9 @@ void mouse_handle() {
             if (mouse_byte[0] & 0x04) {
             packet.buttons |= MIDDLE_CLICK;
             }
-            if (!(mouse_byte[0] & 0x20))
+            if ((mouse_byte[0] & 0x20)==0x20)
               packet.y_difference=-1*(packet.y_difference); //delta-y is a negative value
-            if (!(mouse_byte[0] & 0x10))
+            if ((mouse_byte[0] & 0x10)==0x10)
               packet.x_difference =-1*(packet.x_difference); //delta-x is a negative value
             mouse_packet_handler(packet);
 

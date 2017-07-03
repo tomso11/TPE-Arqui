@@ -112,6 +112,7 @@ int parsebuffer(char * buffer){
 			return ERROR_ARGS;
 			
 		}
+		bufferClean(commando);
 		return usr_clear();
 	
 	}else if(comp_str(commando, "echo")){
