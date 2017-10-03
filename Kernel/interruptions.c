@@ -44,6 +44,7 @@ void iSetHandler(int index, uint64_t handler) {
 typedef void (*handler_t) (void);
 
 void tickHandler() {
+	tick_handler(); // llevame al scheduler
 	//video[i++] = i;	
 
 }
