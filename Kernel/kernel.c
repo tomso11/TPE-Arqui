@@ -26,6 +26,8 @@ static void * const sampleCodeModuleAddress = (void*)0x400000;
 static void * const sampleDataModuleAddress = (void*)0x500000;
 static void * const shellAddress = (void*)0x600000; // elijo una posicion de memoria que no voy a pisar
 static void * const superUserAddress= (void*)0x800000;
+static void * const ModuleAAddress= (void*)0xB00000;
+static void * const ModuleBAddress= (void*)0xC00000;
 static void * const currentAddress = (void*)0x700000; // address logico donde compila nuestro modulo
 static void * const dumbModuleAddress = (void*)0xA00000;
 
