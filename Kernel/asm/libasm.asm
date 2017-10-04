@@ -254,3 +254,22 @@ set_cursor:     pushaq
  
                 popaq
                 ret
+
+;scheduling
+
+tick_handler:
+	pushState
+
+	call timer_handler
+
+	mov rdi, rsp
+	call next_process
+
+	mov rsp, rax
+
+	mov al, 0x20
+	out 0x20, al
+
+	popState
+
+	iretq

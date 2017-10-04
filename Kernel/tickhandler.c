@@ -8,6 +8,5 @@
 //includes falopa, hay que chequearlos
 
 void tick_handler(){ // llamar al scheduler ?
-	
 
 }
