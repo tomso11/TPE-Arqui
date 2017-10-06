@@ -1,8 +1,8 @@
 #include "processManager.h"
-#include "kernelMutex.h"
+#include "mutex.h"
 #include "strings.h"
 #include "process.h"
-#include "queueADT.h"
+#include "queue.h"
 #include "ipc_info.h"
 
 typedef struct {

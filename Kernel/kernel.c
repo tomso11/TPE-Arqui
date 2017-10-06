@@ -1,5 +1,3 @@
-
-
 #include <stdint.h>
 #include <moduleLoader.h>
 #include <naiveConsole.h>

@@ -1,6 +1,6 @@
 #include "timer.h"
 #include "interrupts.h"
-#include "videoDriver.h"
+#include "driverVideo.h"
 #include "memoryAllocator.h"
 #include "defs.h"
 #include "processManager.h"
