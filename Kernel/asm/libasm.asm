@@ -1,28 +1,46 @@
 GLOBAL cpuVendor
+GLOBAL run_mod
+
+;interruptions
 GLOBAL sti
 GLOBAL setPicMaster
 GLOBAL setPicSlave
 GLOBAL irq0Handler
 GLOBAL irq1Handler
 GLOBAL irq12Handler
+
+;syscalls
 GLOBAL irq80Handler
 GLOBAL read_port
 GLOBAL write_port
-GLOBAL run_mod
 GLOBAL sys_callHandler
+
+;scheduler
+GLOBAL _change_process
+GLOBAL _yield_process
+GLOBAL _yield_interrupt
+
+;para mouse
+GLOBAL set_cursor
+GLOBAL cursor
+
+;paginacion
+GLOBAL cli
+GLOBAL saveCR3
+GLOBAL page_enable
+
+;Syscalls
 EXTERN sys_write
 EXTERN sys_read
 EXTERN sys_clear
 ;EXTERN sys_call_echoC
 ;EXTERN sys_call_runC
-GLOBAL cli
-GLOBAL saveCR3
-GLOBAL page_enable
 
-GLOBAL set_cursor
-GLOBAL cursor
-
+;Scheduler
+EXTERN timer_handler
+EXTERN next_process
 EXTERN irqDispatcher
+
 
 %include "./asm/macros.m"
 
@@ -41,6 +59,47 @@ irq12Handler:
 
 irq80Handler:
 	jp sys_callHandler
+
+;scheduling
+
+tick_handler:
+	pushState
+
+	call timer_handler
+
+	mov rdi, rsp
+	call next_process
+
+	mov rsp, rax
+
+	mov al, 0x20
+	out 0x20, al
+
+	popState
+
+	iretq
+
+_change_process:
+	mov rsp, rdi ;cambiar el sp al del nuevo proc
+	popState
+	iretq
+
+
+_yield_process:
+	int 70h   ; llamo al timer tick     	
+	ret
+
+_yield_interrupt:
+	pushState
+
+	mov rdi, rsp
+	call next_process
+
+	mov rsp, rax
+	popState
+
+	iretq
+
 
 ; Nos permite correr un modulo con su direcc en rax
 
@@ -159,7 +218,7 @@ saveCR3:
 	mov cr3, rax
 	ret
 
-;osdev for page enabling
+;osdev habilitar paginas
 
 page_enable:
 	mov rax, 0x10000  ;PD base
@@ -255,21 +314,3 @@ set_cursor:     pushaq
                 popaq
                 ret
 
-;scheduling
-
-tick_handler:
-	pushState
-
-	call timer_handler
-
-	mov rdi, rsp
-	call next_process
-
-	mov rsp, rax
-
-	mov al, 0x20
-	out 0x20, al
-
-	popState
-
-	iretq
