@@ -9,6 +9,9 @@
 #include <mouseDriver.h>
 #include <shell.h>
 
+#include "process.h"
+#include "memoryAllocator.h"
+
 #define MAX_CONTEXTS 12
 
 extern uint8_t text;
@@ -248,6 +251,19 @@ int choose_mod(char c){
 	if(c== '4')
 		return 4;
 	return 0;
+}
+
+void init() {
+	initialize_memory_allocator_mutex();
+	initialize_stack_memory_allocator_mutex();
+	initialize_process_mutex();
+	
+	sti();
+	//sys_exec((uint64_t)sampleCodeModuleAddress, 0, "shell");
+	set_foreground_process (get_process_by_pid(1));
+	while (1) {
+		hlt();
+	}
 }
 
 

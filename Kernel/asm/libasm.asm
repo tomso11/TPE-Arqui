@@ -3,6 +3,8 @@ GLOBAL run_mod
 
 ;interruptions
 GLOBAL sti
+GLOBAL cli
+GLOBAL hlt
 GLOBAL setPicMaster
 GLOBAL setPicSlave
 GLOBAL irq0Handler
@@ -140,6 +142,11 @@ sti:
 
 cli:
 	cli
+	ret
+
+hlt:
+	sti
+	hlt
 	ret
 
 ;Seteo de PIC, provisto por la catedra
