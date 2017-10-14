@@ -69,7 +69,7 @@ void * initializeKernelBinary()
 	void * moduleAddresses[] = { //cargamos los modulos en memoria 
 		sampleCodeModuleAddress,
 		sampleDataModuleAddress,shellAddress,superUserAddress,
-		dumbModuleAddress
+		dumbModuleAddress, ModuleAAddress, ModuleBAddress
 
 	};
 
@@ -142,7 +142,7 @@ int main()
 	cli();
 
 	/* Seteamos los handlers apropiados para cada interrupcion*/
-	iSetHandler(0x20, (uint64_t) irq0Handler);
+	iSetHandler(0x20, (uint64_t) &irq0Handler);
 	iSetHandler(0x21, (uint64_t) &irq1Handler);
 	iSetHandler(0x2C, (uint64_t) &irq12Handler);
 	iSetHandler(0x80, (uint64_t) sys_callHandler);

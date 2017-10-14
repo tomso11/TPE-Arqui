@@ -1,9 +1,9 @@
 #include "timer.h"
-#include "interrupts.h"
+#include "interruptions.h"
 #include "driverVideo.h"
 #include "memoryAllocator.h"
 #include "defs.h"
-#include "processManager.h"
+#include "scheduler.h"
 
 typedef struct c_sleep_process {
 	process * p;

@@ -1,6 +1,6 @@
 #include "process.h"
 #include "memoryAllocator.h"
-#include "processManager.h"
+#include "scheduler.h"
 #include "timer.h"
 #include "strings.h"
 #include "mutex.h"

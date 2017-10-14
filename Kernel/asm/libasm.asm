@@ -21,6 +21,8 @@ GLOBAL sys_callHandler
 GLOBAL _change_process
 GLOBAL _yield_process
 GLOBAL _yield_interrupt
+GLOBAL _unlocked
+
 
 ;para mouse
 GLOBAL set_cursor
@@ -65,7 +67,7 @@ irq80Handler:
 ;scheduling
 
 tick_handler:
-	pushState
+	pushaq
 
 	call timer_handler
 
@@ -77,13 +79,13 @@ tick_handler:
 	mov al, 0x20
 	out 0x20, al
 
-	popState
+	popaq
 
 	iretq
 
 _change_process:
 	mov rsp, rdi ;cambiar el sp al del nuevo proc
-	popState
+	popaq
 	iretq
 
 
@@ -92,15 +94,20 @@ _yield_process:
 	ret
 
 _yield_interrupt:
-	pushState
+	pushaq
 
 	mov rdi, rsp
 	call next_process
 
 	mov rsp, rax
-	popState
+	popaq
 
 	iretq
+
+_unlocked:
+  mov rax, 0
+  xchg rax, [rdi]
+	ret
 
 
 ; Nos permite correr un modulo con su direcc en rax

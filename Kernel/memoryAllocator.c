@@ -1,7 +1,7 @@
 #include "memoryAllocator.h"
-#include "processManager.h"
+#include "scheduler.h"
 #include "process.h"
-#include "kernelMutex.h"
+#include "mutex.h"
 
 /* Alocador de paginas para datos */
 

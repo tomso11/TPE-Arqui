@@ -1,9 +1,9 @@
 #include "memoryAllocator.h"
-#include "processManager.h"
+#include "scheduler.h"
 #include "dirs.h"
-#include "videoDriver.h"
+#include "driverVideo.h"
 #include "process.h"
-#include "interrupts.h"
+#include "interruptions.h"
 
 #define QUANTUM 1
 
