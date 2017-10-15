@@ -169,7 +169,10 @@ int main()
 
 	//initializeKernelBinary();
 	clear();
-	flow_manager();
+	printString("Testing multitask...\n");
+	multi_test();
+
+	//flow_manager();
 
 	//clear();
 	
@@ -266,6 +269,25 @@ void init() {
 	}
 }
 
+void process_one(){
+	while(1)
+		printString("Hey, names process one.\n");
+}
+
+void process_two(){
+	while(1)
+		printString("... and i'm process two.\n");
+}
+
+void multi_test(){
+	void ** mem_a=get_page(0x1000);
+	void ** mem_b=get_page(0x1000);
+	mem_a=&process_one;
+	mem_b=&process_two;
+
+	create_process(mem_a, NULL, "process_a");
+	create_process(mem_b, NULL, "process_b");
+}
 
 // /* mapeo de los modulos a una direccion fisica para correr */
 // void mapModules(uint64_t  phys_addr ){
@@ -314,3 +336,4 @@ void init() {
 // //	((EntryPoint)prev_context)();
 	
 // }
+
