@@ -25,14 +25,32 @@ static commandstruct commands[]= {{"echo", echo},{"clear", clear_sc},{"time", cu
 
 int execute_cmd(command_t cmd){
   int n;
+  int validity=0;
+  int pid;
+  char * name; // nombre del cmd
   for (n=0; n<COMMAND_AMOUNT; n++){
     if(comp_str(cmd.command, (commands[n].command) )==0){
-      // ncPrintDec(n);
-      // ncPrintDec(COMMAND_AMOUNT);
-      return (*commands[n].function)(cmd.args, cmd.args_num);
+      validity=1; // existe el comando
+      pid=exec_proc(*commands[n].function, args, name); //aca solo tenemos la direccion de los argumentos
     }
   }
-  return NOT_EXIST;
+  return validity;
+}
+
+int exec_proc(void * function, const char * args, const char* name){
+  void * memory = malloc ( 0x1000); // asignacion de memoria random
+  char ** arguments = memory;
+  char * arg_strings = memory + MAX_ARGS * sizeof(char*); //donde termina el vector de args
+  int pid;
+
+  arguments[0] = (void*) function;
+  parse_args(arg, arguments, arg_strings);
+  pid = exec( memory, name);
+
+  yield();
+
+  free(memory); //por que ?
+  return pid;
 }
 
 static int help(const char ** args, int args_num){
