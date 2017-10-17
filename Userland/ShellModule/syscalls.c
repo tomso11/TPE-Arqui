@@ -24,8 +24,13 @@ int write(unsigned int fd, char buff, unsigned int bytes) {
 
 /* NOT IMPLEMENTED */
 /* SystemCall para malloc*/
-void * res (unsigned int bytes) {
+void* malloc (unsigned int bytes) {
+    /*return (void*)*/ mallocC(bytes); // casteqar a direccion de una pagina
 	//return (void *) _int80h(5, bytes, 0, 0);
+}
+
+int exec(void * fun_ptr, uint64_t memory, const char * name ){
+    return execC(fun_ptr, memory, name);
 }
 
 /* SystemCall para saber direccion de memoria*/

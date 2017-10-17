@@ -2,6 +2,7 @@
 #include "driverKeyboard.h"
 #include "stdlib.h"
 #include "systemCalls.h"
+#include "memoryAllocator.h"
 
 /* DEPRECATED */
 /* Vector de system calls */
@@ -91,7 +92,14 @@ uint64_t sys_clear(){
 /*NOT IMPLEMENTED*/
 /* SystemCall Malloc */
 uint64_t sys_malloc(uint64_t bytes) {
+	void * page = (void *) get_page(bytes);
+	add_data_page(get_current_process(), page);
+	return (uint64_t) page;
 	//return (uint64_t) malloc(bytes);
+}
+
+uint64_t sys_exec(uint64_t ptr, uint64_t params, const char * name) {
+	return exec_process(create_process(ptr, params, name));
 }
 
 /* System call que retorna la dirección del módulo de datos */

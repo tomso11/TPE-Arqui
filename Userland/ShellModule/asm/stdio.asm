@@ -41,6 +41,28 @@ clearC:
 	pop rbp
 	ret
 
+mallocC:
+	push rbp
+	mov rbp, rsp
+	mov rcx, rdi
+	mov eax,6
+	mov rdx, rsi
+	int 80h
+	mov rsp, rbp
+	pop rbp
+	ret
+
+execC:
+	push rbp
+	mov rbp, rsp
+	mov rcx, rdi
+	mov eax,7
+	mov rdx, rsi
+	int 80h
+	mov rsp, rbp
+	pop rbp
+	ret
+
 ;Syscall generico
 
 sys_call:

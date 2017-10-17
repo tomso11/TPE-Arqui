@@ -37,6 +37,8 @@ GLOBAL page_enable
 EXTERN sys_write
 EXTERN sys_read
 EXTERN sys_clear
+EXTERN sys_malloc
+EXTERN sys_exec
 ;EXTERN sys_call_echoC
 ;EXTERN sys_call_runC
 
@@ -245,6 +247,7 @@ page_enable:
 	ret
 
 ; nos permite manejar el flujo de syscalls mediante el registro eax.
+; por def hace read
 
 sys_callHandler:
 	cli
@@ -263,8 +266,16 @@ write:
 	call sys_write
 clear:
 	cmp eax,5
-	jne finish
+	jne malloc
 	call sys_clear
+malloc:
+	cmp eax,6
+	jne exec
+	call sys_malloc
+exec:
+	cmp eax,7
+	jne finish
+	call sys_exec
 ;echo:
 ;	cmp eax,6
 ;	jne run

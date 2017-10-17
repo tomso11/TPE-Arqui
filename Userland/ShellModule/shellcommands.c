@@ -6,6 +6,7 @@
 #define NOT_EXIST 1
 #define ERROR_ARGS 2
 #define COMMAND_AMOUNT (sizeof(commands)/sizeof(commands[0]))
+#define PAGE 0x1000
 
 
 static commandstruct commands[]= {{"echo", echo},{"clear", clear_sc},{"time", currentTime}, {"help", help}//Agregar comandos aca
@@ -25,15 +26,37 @@ static commandstruct commands[]= {{"echo", echo},{"clear", clear_sc},{"time", cu
 
 int execute_cmd(command_t cmd){
   int n;
+  int pid;
+  int validity=0;
   for (n=0; n<COMMAND_AMOUNT; n++){
     if(comp_str(cmd.command, (commands[n].command) )==0){
-      // ncPrintDec(n);
-      // ncPrintDec(COMMAND_AMOUNT);
-      return (*commands[n].function)(cmd.args, cmd.args_num);
+      validity=1;
+      pid = exec_proc(commands[n].function, cmd);
     }
   }
-  return NOT_EXIST;
+  return validity;
 }
+
+
+int exec_proc(void * function, command_t cmd){
+  void * memory = malloc(PAGE);
+  char ** arguments = memory;
+  char * arg_strings = memory + MAX_ARGS * sizeof(char*);
+  int pid;
+
+  arguments[0]= (void *) function; // el primer argumento sera el nombre de la funcion
+
+  //build_args(arg, arg_strings, arguments + 1); /* take a look */
+
+  pid = exec(function, (uint64_t)memory, cmd.command); 
+
+  //yield(); // una vez finalizado el proceso
+
+  //free(memory);
+
+  return pid;
+}
+
 
 static int help(const char ** args, int args_num){
   if (args_num != 0){
