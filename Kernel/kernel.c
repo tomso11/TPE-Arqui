@@ -119,6 +119,10 @@ void mapModules(uint64_t  phys_addr ){
 
 int main()
 {	
+	
+	initialize_memory_allocator();
+	initialize_stack_memory_allocator();
+	
 	ncPrint("[Kernel Main]");
 	ncNewline();
 	ncPrint("  Sample code module at 0x");
