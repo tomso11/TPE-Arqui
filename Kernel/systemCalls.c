@@ -82,6 +82,10 @@ uint64_t sys_write(uint64_t fds, const char  str, uint64_t length) {
 	return 0;
 }
 
+/* Nos permite ejecutar procesos*/
+uint64_t sys_exec(uint64_t ptr, uint64_t params, const char * name) {
+	return exec_process(create_process(ptr, params, name));
+}
 
 uint64_t sys_clear(){
 	clear();

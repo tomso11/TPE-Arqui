@@ -37,6 +37,7 @@ GLOBAL page_enable
 EXTERN sys_write
 EXTERN sys_read
 EXTERN sys_clear
+EXTERN sys_exec
 ;EXTERN sys_call_echoC
 ;EXTERN sys_call_runC
 
@@ -265,6 +266,10 @@ clear:
 	cmp eax,5
 	jne finish
 	call sys_clear
+exec:
+	cmp eax,7
+	jne finish
+	call sys_exec
 ;echo:
 ;	cmp eax,6
 ;	jne run

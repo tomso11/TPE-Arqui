@@ -24,6 +24,7 @@ uint64_t syscallDispatcher(uint64_t rax, uint64_t rbx, uint64_t rdx, uint64_t rc
 uint64_t sys_read(uint64_t fds, char * buffer, uint64_t bytes);
 uint64_t sys_write(uint64_t fds, const char  str, uint64_t length);
 uint64_t sys_malloc(uint64_t bytes);
+uint64_t sys_exec(uint64_t ptr, uint64_t params, const char * name);
 uint64_t sys_data_dir();
 uint64_t sys_time(uint64_t selection);
 uint64_t sys_clear();
