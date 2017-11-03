@@ -5,6 +5,9 @@
 #include "strings.h"
 #include "mutex.h"
 
+#include "naiveConsole.h"
+#include "driverVideo.h"
+
 #define MAX_PROCESS_NAME 64
 #define CHECK_BIT(var,pos) ((var) & (1<<(pos)));
 
@@ -168,7 +171,21 @@ process * create_process(uint64_t new_process_rip, uint64_t params, const char *
 		foreground = new_process; /* Pone en foreground al primer proceso */
 
 	new_process->open_fds = 0;
-
+	
+	printString("Created new process: PID=");
+	ncPrintDec(new_process->pid);
+	printString(" Process name= ");
+	printString(new_process->name);
+	printString("\n");
+	printString("Stack page= ");
+	ncPrintDec(new_process->stack_page);
+	printString("\n");
+	printString("RIP= ");
+	ncPrintDec(new_process->entry_point);
+	printString("\n");
+	printString("RSP= ");
+	ncPrintDec(new_process->rsp);
+	printString("\n");
 	return new_process;
 }
 

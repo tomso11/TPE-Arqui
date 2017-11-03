@@ -16,9 +16,21 @@
 #define MAX_DATA_PAGES 64
 #define MAX_PROCESS_NAME 64
 
-
-typedef struct c_process process;
 typedef char status;
+struct c_process {
+	status st;
+	char name[MAX_PROCESS_NAME];
+	uint64_t entry_point;
+	uint64_t rsp;
+	uint64_t stack_page;
+	uint64_t n_data_page;
+	void * data_page[MAX_DATA_PAGES];
+	uint64_t pid;
+	uint64_t ppid;
+	uint64_t open_fds; /* bit map */
+};
+typedef struct c_process process;
+
 
 void initialize_process_mutex();
 

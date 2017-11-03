@@ -43,14 +43,17 @@ void iSetHandler(int index, uint64_t handler) {
 
 typedef void (*handler_t) (void);
 
-static int ticks=0;
+// static int ticks=0;
+
 void tickHandler() {
-	//tick_handler(); // llevame al scheduler
-	//video[i++] = i;	
+	tick_handler();
+
+	/* proof that timertick works wonders
 	ticks++;
 	printString("ticks:");
 	ncPrintDec(ticks);
 	printString("\n");
+	*/
 
 }
 

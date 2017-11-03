@@ -176,11 +176,13 @@ int main()
 
 	//initializeKernelBinary();
 	clear();
-	//sys_exec((uint64_t)init, 0, "init"); // crea el proceso init, con la funcion init(), a traves de un syscall
+	//sys_exec((uint64_t)init, 1, "init"); // crea el proceso init, con la funcion init(), a traves de un syscall
+	process * p1;
+	p1=create_process((uint64_t)init, 1, "init");
 	//init();
 	printString("Testing multitask...\n");
-	//	multi_test();
-
+	multi_test(p1);
+	//exec_process(p1);
 	//flow_manager();
 
 	//clear();
@@ -278,31 +280,35 @@ void init() {
 	//sys_exec((uint64_t)sampleCodeModuleAddress, 0, "shell"); // abre la consola
 	set_foreground_process (get_process_by_pid(1));
 	while (1) {
-		printString("you gon get it\n");
 		hlt();
 	}
 }
 
 void process_one(){
+	ncPrint("process_one");
 	while(1)
 		printString("Hey, names process one.\n");
 }
 
 void process_two(){
+	ncPrint("process_two");
 	while(1)
 		printString("... and i'm process two.\n");
 }
 
-void multi_test(){
+void multi_test(process * p1){
 	void ** mem_a=get_page(0x1000);
 	void ** mem_b=get_page(0x1000);
 	mem_a=process_one;
 	mem_b=process_two;
 	process * p;
 
-	create_process(mem_a, NULL, "process_a");
+	p=create_process(mem_a, NULL, "process_a");
+	exec_process(p);
 	p=create_process(mem_b, NULL, "process_b");
 	exec_process(p);
+	
+	exec_process(p1);
 }
 
 // /* mapeo de los modulos a una direccion fisica para correr */
