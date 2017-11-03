@@ -10,6 +10,7 @@ GLOBAL setPicSlave
 GLOBAL irq0Handler
 GLOBAL irq1Handler
 GLOBAL irq12Handler
+GLOBAL int_test
 
 ;syscalls
 GLOBAL irq80Handler
@@ -264,7 +265,7 @@ write:
 	call sys_write
 clear:
 	cmp eax,5
-	jne finish
+	jne exec
 	call sys_clear
 exec:
 	cmp eax,7
@@ -333,3 +334,5 @@ set_cursor:     pushaq
                 popaq
                 ret
 
+int_test:
+	int 20h

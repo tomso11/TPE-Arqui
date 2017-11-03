@@ -43,9 +43,14 @@ void iSetHandler(int index, uint64_t handler) {
 
 typedef void (*handler_t) (void);
 
+static int ticks=0;
 void tickHandler() {
-	tick_handler(); // llevame al scheduler
+	//tick_handler(); // llevame al scheduler
 	//video[i++] = i;	
+	ticks++;
+	printString("ticks:");
+	ncPrintDec(ticks);
+	printString("\n");
 
 }
 

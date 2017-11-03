@@ -38,7 +38,7 @@ typedef void (*handler_t)(void);
 
 void init();
 int choose_mod(char c);
-
+void int_test();
 
 void clearBSS(void * bssAddress, uint64_t bssSize)
 {
@@ -150,12 +150,16 @@ int main()
 	iSetHandler(0x2C, (uint64_t) &irq12Handler);
 	iSetHandler(0x80, (uint64_t) sys_callHandler);
 	
-	setPicMaster(0xF9);
+	setPicMaster(0xFC);
 	setPicSlave(0x0);
 
 
 	initialize_Mouse();
 	initialize_cursor();
+	initialize_memory_allocator();
+	initialize_stack_memory_allocator();
+	//initialize_conditional_variable();
+	initialize_fifo_mutex();
 	printChar('\n');
 
 
@@ -172,16 +176,20 @@ int main()
 
 	//initializeKernelBinary();
 	clear();
-	sys_exec((uint64_t)init, 0, "init"); // crea el proceso init, con la funcion init(), a traves de un syscall
+	//sys_exec((uint64_t)init, 0, "init"); // crea el proceso init, con la funcion init(), a traves de un syscall
+	//init();
 	printString("Testing multitask...\n");
-//	multi_test();
+	//	multi_test();
 
 	//flow_manager();
 
 	//clear();
 	
 	//shell();
-	while(1);
+	while(1){
+		//tickHandler();
+		//int_test();
+	}
 
 	return 0;
 }
@@ -270,6 +278,7 @@ void init() {
 	//sys_exec((uint64_t)sampleCodeModuleAddress, 0, "shell"); // abre la consola
 	set_foreground_process (get_process_by_pid(1));
 	while (1) {
+		printString("you gon get it\n");
 		hlt();
 	}
 }
