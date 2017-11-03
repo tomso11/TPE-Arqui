@@ -75,23 +75,11 @@ uint64_t exec_process(process * new_process) {
 
 	printString("Executing process ...");
 	printString("\n");
-	printString("+ Process name= ");
-	printString(new_process->name);
-	printString("\n");
-	printString("+ Stack page= ");
-	ncPrintDec(new_process->stack_page);
-	printString("\n");
-	printString("+ RIP= ");
-	ncPrintDec(new_process->entry_point);
-	printString("\n");
-	printString("+ RSP= ");
-	ncPrintDec(new_process->rsp);
-	printString("\n");
-	add_process(new_process);
+	process_print(new_process);
 
 	pid = pid_process(new_process);
 
-	if (pid == 0) /*Si es init, cambiamos el sp al de init */
+	if (pid == 0 ) /*Si es init, cambiamos el sp al de init */
 		_change_process(get_rsp_process(current->p));
 
 

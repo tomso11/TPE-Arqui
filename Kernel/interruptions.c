@@ -46,7 +46,7 @@ typedef void (*handler_t) (void);
 // static int ticks=0;
 
 void tickHandler() {
-	tick_handler();
+	//tick_handler();
 
 	/* proof that timertick works wonders
 	ticks++;

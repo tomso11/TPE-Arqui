@@ -17,6 +17,7 @@
 #define MAX_PROCESS_NAME 64
 
 typedef char status;
+
 struct c_process {
 	status st;
 	char name[MAX_PROCESS_NAME];
@@ -29,6 +30,7 @@ struct c_process {
 	uint64_t ppid;
 	uint64_t open_fds; /* bit map */
 };
+
 typedef struct c_process process;
 
 
@@ -79,4 +81,6 @@ int get_name_process(char * buffer, process * p);
 /* Devuelve los pids actuales. Termina el arreglo con -1 */
 int get_current_pids(int pid_array[]);
 
+/* Debugging */
+void process_print(process * p);
 #endif

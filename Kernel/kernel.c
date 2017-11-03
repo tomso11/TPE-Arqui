@@ -8,6 +8,7 @@
 #include <driverKeyboard.h>
 #include <mouseDriver.h>
 #include <shell.h>
+#include "condVariable.h"
 
 #include "process.h"
 #include "memoryAllocator.h"
@@ -39,6 +40,7 @@ typedef void (*handler_t)(void);
 void init();
 int choose_mod(char c);
 void int_test();
+void multi_test();
 
 void clearBSS(void * bssAddress, uint64_t bssSize)
 {
@@ -120,7 +122,32 @@ void mapModules(uint64_t  phys_addr ){
 
 int main()
 {	
+	cli();
+	/* Seteamos los handlers apropiados para cada interrupcion*/
+	iSetHandler(0x20, (uint64_t) &irq0Handler);
+	iSetHandler(0x21, (uint64_t) &irq1Handler);
+	iSetHandler(0x2C, (uint64_t) &irq12Handler);
+	iSetHandler(0x80, (uint64_t) sys_callHandler);
 	
+	setPicMaster(0xFC);
+	setPicSlave(0x0);
+
+
+	initialize_Mouse();
+	initialize_cursor();
+	initialize_memory_allocator();
+	initialize_stack_memory_allocator();
+	initialize_conditional_variable();
+	initialize_fifo_mutex();
+	sti();
+
+	process * p1;
+	//sys_exec((uint64_t)init, 0, "init");
+	void ** mem=get_page(0x1000);
+	mem=multi_test;
+	p1=create_process((uint64_t)multi_test, 0, "init");
+	exec_process(p1);
+	//p1=create_process((uint64_t)sampleCodeModuleAddress, 0, "shell");
 	
 	ncPrint("[Kernel Main]");
 	ncNewline();
@@ -142,31 +169,9 @@ int main()
 
 	ncPrint("[Finished]");
 
-	cli();
-
-	/* Seteamos los handlers apropiados para cada interrupcion*/
-	iSetHandler(0x20, (uint64_t) &irq0Handler);
-	iSetHandler(0x21, (uint64_t) &irq1Handler);
-	iSetHandler(0x2C, (uint64_t) &irq12Handler);
-	iSetHandler(0x80, (uint64_t) sys_callHandler);
 	
-	setPicMaster(0xFC);
-	setPicSlave(0x0);
-
-
-	initialize_Mouse();
-	initialize_cursor();
-	initialize_memory_allocator();
-	initialize_stack_memory_allocator();
-	//initialize_conditional_variable();
-	initialize_fifo_mutex();
-	printChar('\n');
-
-
-	sti();
-	//page_enable();
 	saveCR3();
-	//clear();
+	
 	ncPrintHex(&endOfKernel);
 	printChar('\n');
 	ncPrintHex(&endOfKernelBinary);
@@ -177,11 +182,24 @@ int main()
 	//initializeKernelBinary();
 	clear();
 	//sys_exec((uint64_t)init, 1, "init"); // crea el proceso init, con la funcion init(), a traves de un syscall
-	process * p1;
-	p1=create_process((uint64_t)init, 1, "init");
+	
+	//create_process((uint64_t)init, 0, "init");
+	
+	//exec_process(p1);
 	//init();
+	copy_mod((uint64_t)sampleCodeModuleAddress);
+	mapModules((uint64_t) currentAddress);
+	//p1=create_process((uint64_t)currentAddress, 0, "shell");
+	//multi_test();
 	printString("Testing multitask...\n");
-	multi_test(p1);
+	int * pid_array;
+	int t = 0;
+	get_current_pids(pid_array);
+	for( t=0 ; pid_array[t] != -1 ; t++){
+		process_print(get_process_by_pid(pid_array[t]));
+	}
+	exec_process(p1);
+	//multi_test(p1);
 	//exec_process(p1);
 	//flow_manager();
 
@@ -277,7 +295,7 @@ void init() {
 	
 	printString("yeh\n");
 	sti();
-	//sys_exec((uint64_t)sampleCodeModuleAddress, 0, "shell"); // abre la consola
+	sys_exec((uint64_t)sampleCodeModuleAddress, 0, "shell"); // abre la consola
 	set_foreground_process (get_process_by_pid(1));
 	while (1) {
 		hlt();
@@ -297,18 +315,22 @@ void process_two(){
 }
 
 void multi_test(process * p1){
+	initialize_memory_allocator_mutex();
+	initialize_stack_memory_allocator_mutex();
+	initialize_process_mutex();
+
 	void ** mem_a=get_page(0x1000);
 	void ** mem_b=get_page(0x1000);
 	mem_a=process_one;
 	mem_b=process_two;
 	process * p;
 
-	p=create_process(mem_a, NULL, "process_a");
-	exec_process(p);
-	p=create_process(mem_b, NULL, "process_b");
-	exec_process(p);
+	sys_exec((uint64_t)mem_a, 0, "process_one");
+	sys_exec((uint64_t)mem_b, 0, "process_two");
+	set_foreground_process(get_process_by_pid(1));
+	while(1);
 	
-	exec_process(p1);
+	
 }
 
 // /* mapeo de los modulos a una direccion fisica para correr */

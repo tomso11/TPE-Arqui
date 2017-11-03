@@ -43,6 +43,7 @@ typedef struct {
 	uint64_t base;
 } StackFrame;
 
+/* definido en header
 struct c_process {
 	status st;
 	char name[MAX_PROCESS_NAME];
@@ -53,8 +54,10 @@ struct c_process {
 	void * data_page[MAX_DATA_PAGES];
 	uint64_t pid;
 	uint64_t ppid;
-	uint64_t open_fds; /* bit map */
+	uint64_t open_fds; 
 };
+*/
+
 
 static process * process_table[MAX_PROCESSES] = {NULL};
 
@@ -172,20 +175,9 @@ process * create_process(uint64_t new_process_rip, uint64_t params, const char *
 
 	new_process->open_fds = 0;
 	
-	printString("Created new process: PID=");
-	ncPrintDec(new_process->pid);
-	printString(" Process name= ");
-	printString(new_process->name);
+	printString("Created new process: ");
 	printString("\n");
-	printString("Stack page= ");
-	ncPrintDec(new_process->stack_page);
-	printString("\n");
-	printString("RIP= ");
-	ncPrintDec(new_process->entry_point);
-	printString("\n");
-	printString("RSP= ");
-	ncPrintDec(new_process->rsp);
-	printString("\n");
+	process_print(new_process);
 	return new_process;
 }
 
@@ -407,4 +399,23 @@ static uint64_t fill_stack(uint64_t rip, uint64_t stack_page, uint64_t params) {
 	frame->base =	0x000;
 
 	return (uint64_t) &frame->gs;
+}
+
+/*Debugging*/
+
+void process_print(process * p){
+	printString("PID=");
+	ncPrintDec(p->pid);
+	printString(" Process name= ");
+	printString(p->name);
+	printString("\n");
+	printString("Stack page= ");
+	ncPrintDec(p->stack_page);
+	printString("\n");
+	printString("RIP= ");
+	ncPrintDec(p->entry_point);
+	printString("\n");
+	printString("RSP= ");
+	ncPrintDec(p->rsp);
+	printString("\n");
 }
