@@ -35,12 +35,68 @@ GLOBAL saveCR3
 GLOBAL page_enable
 
 ;Syscalls
+GLOBAL write
+GLOBAL clear
+GLOBAL time
+EXTERN sys_time
+GLOBAL exec
+GLOBAL wait
+EXTERN sys_wait
+GLOBAL reserve
+EXTERN sys_malloc
+GLOBAL free
+EXTERN sys_free
+GLOBAL data
+EXTERN sys_data
+GLOBAL end
+EXTERN sys_end
+GLOBAL yield
+EXTERN sys_yield
+GLOBAL mutex_op
+EXTERN sys_mutex_op
+GLOBAL mutex_cl
+EXTERN sys_mutex_cl
+GLOBAL mutex_lo
+EXTERN sys_mutex_lock
+GLOBAL mutex_ul
+EXTERN sys_mutex_unlock
+GLOBAL set_fg
+EXTERN sys_set_foreground
+GLOBAL fifo_op
+EXTERN sys_fifo_op
+GLOBAL fifo_cl
+EXTERN sys_fifo_cl
+GLOBAL kill
+EXTERN sys_kill
+GLOBAL pid
+EXTERN sys_pid
+GLOBAL ppid
+EXTERN sys_ppid
+GLOBAL get_process_info
+EXTERN sys_process_info
+GLOBAL cond_op
+EXTERN sys_cond_open
+GLOBAL cond_wait
+EXTERN sys_cond_wait
+GLOBAL cond_signal
+EXTERN sys_cond_signal
+GLOBAL cond_bc
+EXTERN sys_cond_broadcast
+GLOBAL cond_cl
+EXTERN sys_cond_close
+GLOBAL get_current_pids
+EXTERN sys_get_pids
+GLOBAL get_conds_info
+EXTERN sys_get_conds_info
+GLOBAL get_mutexes_info
+EXTERN sys_get_mutexes_info
+GLOBAL get_fifos_info
+EXTERN sys_get_fifos_info
+GLOBAL finish
 EXTERN sys_write
 EXTERN sys_read
 EXTERN sys_clear
 EXTERN sys_exec
-;EXTERN sys_call_echoC
-;EXTERN sys_call_runC
 
 ;Scheduler
 EXTERN timer_handler
@@ -265,22 +321,120 @@ write:
 	call sys_write
 clear:
 	cmp eax,5
-	jne exec
+	jne time
 	call sys_clear
+time:
+	cmp eax,6
+	jne exec
+	call sys_time
 exec:
 	cmp eax,7
-	jne finish
+	jne wait
 	call sys_exec
-;echo:
-;	cmp eax,6
-;	jne run
-;	mov rdi,rcx
-;	call sys_call_echoC
-;run:
-;	cmp eax, 7
-;	jne finish
-;	mov rdi,rcx
-;	call sys_call_runC
+wait:
+	cmp eax,8
+	jne reserve
+	call sys_wait
+reserve:
+	cmp eax,9
+	jne free
+	call sys_malloc
+free:
+	cmp eax,10
+	jne data
+	call sys_free
+data:
+	cmp eax,11
+	jne end
+	call sys_data
+end:
+	cmp eax,12
+	jne end 
+	call sys_end
+yield:
+	cmp eax,13
+	jne mutex_op
+	call sys_yield
+mutex_op:
+	cmp eax,14
+	jne mutex_cl
+	call sys_mutex_op
+mutex_cl:
+	cmp eax,15
+	jne mutex_lo
+	call sys_mutex_cl
+mutex_lo:
+	cmp eax,16
+	jne mutex_ul
+	call sys_mutex_lock
+mutex_ul:
+	cmp eax,17
+	jne set_fg
+	call sys_mutex_unlock
+set_fg:
+	cmp eax,18
+	jne fifo_op
+	call sys_set_foreground
+fifo_op:
+	cmp eax,19
+	jne fifo_cl
+	call sys_fifo_op
+fifo_cl:
+	cmp eax,20
+	jne kill
+	call sys_fifo_cl
+kill:
+	cmp eax,21
+	jne pid
+	call sys_kill
+pid:
+	cmp eax,22
+	jne ppid
+	call sys_pid
+ppid:
+	cmp eax,23
+	jne get_process_info
+	call sys_ppid
+get_process_info:
+	cmp eax,24
+	jne cond_op
+	call sys_process_info
+cond_op:
+	cmp eax,25
+	jne cond_wait
+	call sys_cond_open
+cond_wait:
+	cmp eax,26
+	jne cond_signal
+	call sys_cond_wait
+cond_signal:
+	cmp eax,27
+	jne cond_bc
+	call sys_cond_signal
+cond_bc:
+	cmp eax,28
+	jne cond_cl
+	call sys_cond_broadcast
+cond_cl:
+	cmp eax,29
+	jne get_current_pids
+	call sys_cond_close
+get_current_pids:
+	cmp eax,30
+	jne get_conds_info
+	call sys_get_pids
+get_conds_info:
+	cmp eax,31
+	jne get_mutexes_info
+	call sys_get_conds_info
+get_mutexes_info:
+	cmp eax,32
+	jne get_fifos_info
+	call sys_get_mutexes_info
+get_fifos_info:
+	cmp eax,33
+	jne finish
+	call sys_get_fifos_info
 finish:
 	mov rdi,rax
 	mov al, 20h

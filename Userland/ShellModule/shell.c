@@ -43,7 +43,7 @@ int shell(){
 		
 		putchar('>');
 
-		while( (c=super_getchar()) != '\n' ){
+		while( (c=getchar()) != '\n' ){
 
 			if(index==BUFF_SIZE){
 				index=0;

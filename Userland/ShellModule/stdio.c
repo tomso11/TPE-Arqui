@@ -113,7 +113,7 @@ int readRow(char *str, unsigned int maxlen) {
 }
 
 
-int super_getchar(){
+int getchar(){
 	char * getch=my_malloc(1);
 	*getch=0;
 	while (*getch == 0){
@@ -128,30 +128,6 @@ int super_getchar(){
 	return (int)(unsigned char)*getch;
 }
 
-
-/*Lee del buffer hasta '\n' caso en el cual lo marca como vacio. Si esta vacio el buffer lo llena.*/
- char getchar(char * buff) {
- 	char ans;
-	 char * getch=my_malloc(1);
-	*getch=0;
-	while (*getch == 0){
-		read(STDIN, getch, 1);
-	}
-	//printChar(*getch);
-	if(*getch=='\0'){
-		return -1;
-	}
-	*(buff)=*getch;
-	
-	// if (index == 0) // buffer vacio
-	// 	buffil();
- //    unsigned char c = buff[index++]; // Se lee caracter del buffer
- //    if (c == '\n' || index== BUFF_SIZE)
- //    	index = 0;  // reset buffer
-	ans=*getch;
-	my_free(1);
-    return ans;
-}
 
 /* Llena el buffer hasta un '\n' o hasta que se termine su capacidad */
 static void buffil() {
@@ -169,16 +145,4 @@ static void buffil() {
 
 int usr_clear(){
 	clear_screen();
-}
-
-void * my_malloc(int bytes){
-	
-	void * aux = position;
-	position+=bytes;
-	return aux;
-}
-
-void my_free(int bytes){
-	position= position - bytes;
-	return;
 }

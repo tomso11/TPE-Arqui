@@ -1,5 +1,5 @@
-#ifndef _TIME_H_
-#define _TIME_H_
+#ifndef TIME_H
+#define TIME_H
 
 #include <stdint.h>
 
@@ -7,10 +7,10 @@
 #define MAX_GMT 14
 #define DEFAULT_GMT -3 // Argentina GMT
 
-int setGMT(int gmt);
-int getGMT(int gmt);
+void sleep(uint64_t milliseconds);
 int seconds();
 int minutes();
 int hour();
+int setGMT(int gmt);
 
 #endif
