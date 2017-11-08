@@ -146,3 +146,76 @@ static void buffil() {
 int usr_clear(){
 	clear_screen();
 }
+
+/* Reserva espacio en memoria */
+void * malloc (int size) {
+	return (void *) reserve(size);
+}
+
+/* Libera espacio de memoria */
+void free(void * ptr){
+	free_reserve (ptr);
+}
+
+/* Copia en str los valores ascii de los digitos de value en la base indicada.
+** Devuelve la cantidad de digitos copiados. */
+int itoa(int value, char *str, int base) {
+	char *p = str;
+	char *p1, *p2;
+	int len = 0;
+
+	if(value < 0 && base == 10) {
+		value = -value;
+		len++;
+		*p++ = '-';
+		str++;
+	}
+
+	//Calculate characters for each digit
+	do
+	{
+		int remainder = value % base;
+		*p++ = (remainder < 10) ? remainder + '0' : remainder + 'A' - 10;
+		len++;
+	}
+	while (value /= base);
+
+	// Terminate string in str.
+	*p = '\0';
+
+	//Reverse string in str.
+	p1 = str;
+	p2 = p - 1;
+	while (p1 < p2)
+	{
+		char tmp = *p1;
+		*p1 = *p2;
+		*p2 = tmp;
+		p1++;
+		p2--;
+	}
+
+	return len;
+}
+
+/* A partir de un string retorna su valor entero */
+int atoi(const char *str) {
+	while (isspace(*str))
+		str++;
+
+	int num = 0;
+	int sign = 1;
+	if (*str == '-') {
+		str++;
+		sign = -1;
+	}
+	else if (*str == '+')
+		str++;
+
+	while (*str != '\0' && isdigit(*str)) {
+		num = num * 10 + (*str) - '0';
+		str++;
+	}
+
+	return num * sign;
+}

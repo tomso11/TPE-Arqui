@@ -9,18 +9,16 @@
 #define SPACE 0
 
 #include "ctype.h"
-#include "stdlib.h"
-//#include "stringlib.h"
+#include "stringlib.h"
 #include "stdio.h"
 
 #include <stdarg.h>
 
-int super_getchar();
 void putstring(char * str);
 
 void fputchar(unsigned int fds, int c);
 void putchar(int c);
- char getchar(char * buff);
+char getchar();
 int printf(const char *format, ...);
 int fprintf(unsigned int fds, const char *format, ...);
 static int fprinttype(unsigned int fds, const char *format, va_list args);
@@ -30,6 +28,9 @@ int readRow(char *str, unsigned int maxlen);
 int readRowAndClear(char *str, unsigned int maxlen);
 int scanf(const char *format, ...);
 static void buffil();
-void* my_malloc (int size);
+void * malloc (int size);
+void free(void * ptr);
+int itoa(int value, char *str, int base);
+int atoi(const char *str);
 
 #endif

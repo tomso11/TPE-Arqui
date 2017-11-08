@@ -3,7 +3,7 @@
 #include "stdio.h"
 #include "syscalls.h"
 #include "strings.h"
-#include "random.h"
+#include "rand.h"
 #include "executer.h"
 #include "stdlib.h"
 #include "ctype.h"

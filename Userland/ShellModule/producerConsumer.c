@@ -2,7 +2,7 @@
 #include "stdio.h"
 #include "time.h"
 #include "executer.h"
-#include "random.h"
+#include "rand.h"
 #include "ctype.h"
 
 static void producer();
