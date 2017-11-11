@@ -18,7 +18,7 @@ void putstring(char * str);
 
 void fputchar(unsigned int fds, int c);
 void putchar(int c);
-char getchar();
+int getchar();
 int printf(const char *format, ...);
 int fprintf(unsigned int fds, const char *format, ...);
 static int fprinttype(unsigned int fds, const char *format, va_list args);
@@ -28,7 +28,7 @@ int readRow(char *str, unsigned int maxlen);
 int readRowAndClear(char *str, unsigned int maxlen);
 int scanf(const char *format, ...);
 static void buffil();
-void * malloc (int size);
+void * mymalloc (int size);
 void free(void * ptr);
 int itoa(int value, char *str, int base);
 int atoi(const char *str);

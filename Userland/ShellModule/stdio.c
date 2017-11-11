@@ -114,7 +114,7 @@ int readRow(char *str, unsigned int maxlen) {
 
 
 int getchar(){
-	char * getch=my_malloc(1);
+	char * getch=mymalloc(1);
 	*getch=0;
 	while (*getch == 0){
 		read(STDIN, getch, 1);
@@ -148,7 +148,7 @@ int usr_clear(){
 }
 
 /* Reserva espacio en memoria */
-void * malloc (int size) {
+void * mymalloc (int size) {
 	return (void *) reserve(size);
 }
 

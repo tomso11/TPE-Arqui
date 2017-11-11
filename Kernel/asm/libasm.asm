@@ -35,64 +35,33 @@ GLOBAL saveCR3
 GLOBAL page_enable
 
 ;Syscalls
-GLOBAL write
-GLOBAL clear
-GLOBAL time
 EXTERN sys_time
-GLOBAL exec
-GLOBAL wait
 EXTERN sys_wait
-GLOBAL reserve
 EXTERN sys_malloc
-GLOBAL free
 EXTERN sys_free
-GLOBAL data
-EXTERN sys_data
-GLOBAL end
+EXTERN sys_data_address
 EXTERN sys_end
-GLOBAL yield
 EXTERN sys_yield
-GLOBAL mutex_op
 EXTERN sys_mutex_op
-GLOBAL mutex_cl
 EXTERN sys_mutex_cl
-GLOBAL mutex_lo
 EXTERN sys_mutex_lock
-GLOBAL mutex_ul
 EXTERN sys_mutex_unlock
-GLOBAL set_fg
 EXTERN sys_set_foreground
-GLOBAL fifo_op
 EXTERN sys_fifo_op
-GLOBAL fifo_cl
 EXTERN sys_fifo_cl
-GLOBAL kill
 EXTERN sys_kill
-GLOBAL pid
 EXTERN sys_pid
-GLOBAL ppid
 EXTERN sys_ppid
-GLOBAL get_process_info
 EXTERN sys_process_info
-GLOBAL cond_op
 EXTERN sys_cond_open
-GLOBAL cond_wait
 EXTERN sys_cond_wait
-GLOBAL cond_signal
 EXTERN sys_cond_signal
-GLOBAL cond_bc
 EXTERN sys_cond_broadcast
-GLOBAL cond_cl
 EXTERN sys_cond_close
-GLOBAL get_current_pids
 EXTERN sys_get_pids
-GLOBAL get_conds_info
 EXTERN sys_get_conds_info
-GLOBAL get_mutexes_info
 EXTERN sys_get_mutexes_info
-GLOBAL get_fifos_info
 EXTERN sys_get_fifos_info
-GLOBAL finish
 EXTERN sys_write
 EXTERN sys_read
 EXTERN sys_clear
@@ -329,9 +298,9 @@ time:
 	call sys_time
 exec:
 	cmp eax,7
-	jne wait
+	jne wait_label
 	call sys_exec
-wait:
+wait_label:
 	cmp eax,8
 	jne reserve
 	call sys_wait
@@ -346,7 +315,7 @@ free:
 data:
 	cmp eax,11
 	jne end
-	call sys_data
+	call sys_data_address
 end:
 	cmp eax,12
 	jne end 
@@ -487,6 +456,3 @@ set_cursor:     pushaq
  
                 popaq
                 ret
-
-int_test:
-	int 20h

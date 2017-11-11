@@ -28,6 +28,7 @@ int execute_cmd(command_t cmd){
   int validity=0;
   int pid;
   char * name; // nombre del cmd
+  char * args; //provisorio falta implementar
   for (n=0; n<COMMAND_AMOUNT; n++){
     if(comp_str(cmd.command, (commands[n].command) )==0){
       validity=1; // existe el comando
@@ -38,13 +39,13 @@ int execute_cmd(command_t cmd){
 }
 
 int exec_proc(void * function, const char * args, const char* name){
-  void * memory = malloc ( 0x1000); // asignacion de memoria random
+  void * memory = mymalloc ( 0x1000); // asignacion de memoria random
   char ** arguments = memory;
   char * arg_strings = memory + MAX_ARGS * sizeof(char*); //donde termina el vector de args
   int pid;
 
   arguments[0] = (void*) function;
-  parse_args(arg, arguments, arg_strings);
+  //parse_args(args, arguments, arg_strings); //TBI
   pid = exec( memory, name);
 
   yield();
@@ -57,7 +58,7 @@ static int help(const char ** args, int args_num){
   if (args_num != 0){
   	return ERROR_ARGS;
   } else{
-    char ** msg=my_malloc(sizeof(char*));
+    char ** msg=mymalloc(sizeof(char*));
     char * s="The available commands are the following:\nhelp: Display information about existing commands\necho[args...]: Display the arguments on screen\nclear:clear the screen\ntime: Display the current time on screen in 24hr. format[hh:mm:ss]\n";
     msg[0]=s;
     putstring(*msg);

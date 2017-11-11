@@ -3,10 +3,13 @@
 
 #include <stdint.h>
 #include "driverVideo.h"
+#include "ipc_info.h"
+#include "process_info.h"
 
 #define STDOUT 0
 #define STDIN 1
 #define STDERR 2
+#define FILE_DESCRIPTORS 3
 
 /*Direccion de inicio del módulo de datos */
 #define DATA_DIR 0x500000

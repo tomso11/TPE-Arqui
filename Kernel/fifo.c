@@ -224,11 +224,13 @@ static void release_readers(queueADT q) {
 }
 
 static int write_circular_buffer(circular_buffer * c_buf, const void * source, int bytes) {
+  /* Escribira todo lo que pueda sn llenar el buffer*/
   int write_bytes = (c_buf->buf_fill + bytes) > BUF_SIZE ? BUF_SIZE - c_buf->buf_fill : bytes;
   int aux = c_buf->free_slot;
 
   c_buf->free_slot = (c_buf->free_slot + write_bytes) % BUF_SIZE;
 
+  /*Queremos saber si es posible copiar todo corrido o debemos circular sobre el buffer*/
   if (aux < c_buf->free_slot) {
     memcpy(c_buf->buffer+aux, source, write_bytes);
   }

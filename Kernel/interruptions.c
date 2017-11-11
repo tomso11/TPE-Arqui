@@ -47,7 +47,8 @@ typedef void (*handler_t) (void);
 
 void tickHandler() {
 	//tick_handler();
-
+	printString("ticks:");
+	printString("\n");
 	/* proof that timertick works wonders
 	ticks++;
 	printString("ticks:");
@@ -55,6 +56,41 @@ void tickHandler() {
 	printString("\n");
 	*/
 
+}
+
+void next_process2(){
+	printf("funcion nextprocess2\n");
+	return;
+};
+
+void timer_handler2() {
+	printf("1\n");
+	/*sleep_process * current = sleeping_processes;
+	sleep_process * prev = NULL;
+	sleep_process * sp;
+	printf("2\n");
+	while (current != NULL) {
+		current->ticks -= 1;
+		printf("11\n");
+		if (current->ticks <= 0) {
+			sp = current;
+
+			if (prev == NULL)
+				sleeping_processes = current->next;
+			else
+				prev->next = current->next;
+
+			unblock_process(current->p);
+			current = current->next;
+			store_page((uint64_t) sp);
+		}
+		else {
+			prev = current;
+			current = current->next;
+		}
+	}*/
+	printf("3\n");
+	return;
 }
 
 /* en "driverKeyboard.c" */
@@ -69,24 +105,7 @@ void mouseHandler(){
 
 }
 
-/*DEPRECATED*/
-/*Se maneja de otra forma desde lib.asm*/
-
-int co=0;
-void syscallHandler(uint64_t rax, uint64_t rbx, uint64_t rcx, uint64_t rdx){
-	
-	// if( co==0){
-	// ncPrintDec(rax);
-	// ncPrintDec(rbx);
-	// ncPrintDec(rcx);
-	// ncPrintDec(rdx);
-	syscallDispatcher(rax,rbx,rcx,rdx);
-	// co++;
-	// }
-}
-
-
-handler_t handlers[] = {tickHandler, keyboardHandler, mouseHandler, syscallHandler}; // vector con todas las interrupciones que vamos a usar
+handler_t handlers[] = {tickHandler, keyboardHandler, mouseHandler, sys_callHandler}; // vector con todas las interrupciones que vamos a usar
 
 void irqDispatcher(int irq){ //le pasamos el numero de interrupcion y nos lleva al handler adecuado
 	handlers[irq]();

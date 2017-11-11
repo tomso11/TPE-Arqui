@@ -33,6 +33,8 @@ static void * const ModuleBAddress= (void*)0xC00000;
 static void * const currentAddress = (void*)0x700000; // address logico donde compila nuestro modulo
 static void * const dumbModuleAddress = (void*)0xA00000;
 
+void tick_handler();
+
 typedef int (*EntryPoint)();
 typedef int (*EntryPointS)(int);
 typedef void (*handler_t)(void);
@@ -41,6 +43,8 @@ void init();
 int choose_mod(char c);
 void int_test();
 void multi_test();
+void process_two();
+void process_one();
 
 void clearBSS(void * bssAddress, uint64_t bssSize)
 {
@@ -124,7 +128,8 @@ int main()
 {	
 	cli();
 	/* Seteamos los handlers apropiados para cada interrupcion*/
-	iSetHandler(0x20, (uint64_t) &irq0Handler);
+	iSetHandler(0x20, (uint64_t) &tick_handler);
+	//iSetHandler(0x20, (uint64_t) &irq0Handler);
 	iSetHandler(0x21, (uint64_t) &irq1Handler);
 	iSetHandler(0x2C, (uint64_t) &irq12Handler);
 	iSetHandler(0x80, (uint64_t) sys_callHandler);
@@ -141,14 +146,16 @@ int main()
 	initialize_fifo_mutex();
 	sti();
 
+	/*
 	process * p1;
-	//sys_exec((uint64_t)init, 0, "init");
+	sys_exec((uint64_t)init, 0, "init");
 	void ** mem=get_page(0x1000);
 	mem=multi_test;
 	p1=create_process((uint64_t)multi_test, 0, "init");
 	exec_process(p1);
-	//p1=create_process((uint64_t)sampleCodeModuleAddress, 0, "shell");
-	
+	p1=create_process((uint64_t)sampleCodeModuleAddress, 0, "shell");
+	*/
+
 	ncPrint("[Kernel Main]");
 	ncNewline();
 	ncPrint("  Sample code module at 0x");
@@ -198,11 +205,12 @@ int main()
 	for( t=0 ; pid_array[t] != -1 ; t++){
 		process_print(get_process_by_pid(pid_array[t]));
 	}
-	exec_process(p1);
 	//multi_test(p1);
+	sys_exec((uint64_t)init, 0, "init");
 	//exec_process(p1);
 	//flow_manager();
 
+	printString("Hasta aca llego");
 	//clear();
 	
 	//shell();
@@ -295,23 +303,27 @@ void init() {
 	
 	printString("yeh\n");
 	sti();
+	sys_exec((uint64_t)process_one, 0, "p1");
+	sys_exec((uint64_t)process_two, 0, "p2");
+	/*
 	sys_exec((uint64_t)sampleCodeModuleAddress, 0, "shell"); // abre la consola
 	set_foreground_process (get_process_by_pid(1));
+	*/
 	while (1) {
-		hlt();
+		//hlt();
 	}
 }
 
 void process_one(){
 	ncPrint("process_one");
 	while(1)
-		printString("Hey, names process one.\n");
+		printString("1\n");
 }
 
 void process_two(){
 	ncPrint("process_two");
 	while(1)
-		printString("... and i'm process two.\n");
+		printString("2\n");
 }
 
 void multi_test(process * p1){

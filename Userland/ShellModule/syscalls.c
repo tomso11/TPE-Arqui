@@ -1,18 +1,20 @@
 #include "syscalls.h"
+#include "ipc_info.h"
+#include "process_info.h"
 
 /* Ambas llamadas son llamadas desde "stdio.c" y llaman funciones de "stdio.asm" */
 
 /* SystemCall Read */
 int read(unsigned int fd, char *buff, unsigned int bytes) {
      int i;
-     readC(buff,bytes);
+     readC(fd, buff,bytes);
      return i;
 }
 
 /* SystemCall Write */
 int write(unsigned int fd, char buff, unsigned int bytes) {
     int i;
-    writeC(buff,bytes);
+    writeC(fd,buff,bytes);
     return i;
 }
 

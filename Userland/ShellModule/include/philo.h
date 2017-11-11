@@ -25,13 +25,11 @@ typedef struct philosopher_data {
   int cond_die;
 } philosopher_data;
 
-int start_philosophers_problem(int graphic, int philoNumber);
+char * stateStrings[] = {"THINKING", "HUNGRY", "EATING", "DYING"};
+
+int start_philosophers_problem( int philoNumber);
 
 void renderText(philosopher_data * philos, int philosopherCount);
-
-void renderGraphics(philosopher_data * philos, int philosopherCount);
-
-void print_colors_instructions();
 
 void print_commands();
 

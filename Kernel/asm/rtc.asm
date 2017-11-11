@@ -1,6 +1,4 @@
-GLOBAL seconds
-GLOBAL minutes
-GLOBAL hour
+
 
 section .text
 

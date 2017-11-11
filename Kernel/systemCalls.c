@@ -3,7 +3,23 @@
 #include "stdlib.h"
 #include "systemCalls.h"
 #include "timer.h"
+#include "condVariable.h"
+#include "mutex.h"
+#include "process.h"
+#include "fifo.h"
+#include "ipc_info.h"
+#include "process_info.h"
 
+#define INIT 0
+#define SHELL 1
+
+static unsigned int fifo_to_fds(int key) {
+	return key + FILE_DESCRIPTORS;
+}
+
+static int fds_to_fifo(unsigned int fds) {
+	return fds - FILE_DESCRIPTORS;
+}
 
 /*Syscall read y write llamadas desde libasm, se conectan directamente con las funciones del Kernel*/
 /* SystemCall de Read para leer de entrada estandar*/
@@ -12,29 +28,33 @@ uint64_t sys_read(uint64_t fds, char * buffer, uint64_t bytes) {
 	unsigned int i = 0;
 	char c;
 	int block=-1;
-			c = poll_keyboard_buffer(buffer,bytes);
+		if(fds == STDIN){
+			c = poll_keyboard_buffer(buffer,bytes); // con la implementacion actual se lee de a un caracter
 			if (c != '\0') {
-				//*buffer = c;
-				//printChar(*buffer);
 				block=0;
 			} 
 			else{
 				block= -1;
 			}
-
-		// else {
-		// 	_hlt(); <--- en asm
-		// }
+		}
+		else if (fds >= FILE_DESCRIPTORS){
+			i=fifo_read(fds_to_fifo(fds), buffer, bytes);
+		}
     return block;
 }
 
 /* SystemCall de Write para escribir a salida estándar */
 uint64_t sys_write(uint64_t fds, const char  str, uint64_t length) {
+	int n;
+
 	if (fds == STDERR) { // podriamos darle un color especial para diferenciar los errores
 		printString(str);
-	} 
+	}
 	else if (fds == STDOUT) {
 		printChar(str);
+	}
+	else if (fds >= FILE_DESCRIPTORS){
+		n=fifo_write(fds_to_fifo(fds), str, length);
 	}
 	return 0;
 }

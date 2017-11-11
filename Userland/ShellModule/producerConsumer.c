@@ -1,10 +1,9 @@
 #include "producerConsumer.h"
 #include "stdio.h"
 #include "time.h"
-#include "executer.h"
+#include "shellcommands.h"
 #include "rand.h"
 #include "ctype.h"
-
 static void producer();
 static void consumer();
 static void control_speed();
@@ -23,7 +22,7 @@ void start_producer_consumer_problem(int buf_size) {
 
   /* Llena el fifo de slots vacíos con cantidad de mensajes igual al tamaño del buffer */
   for (i = 0; i < buf_size; i++)
-    write(empty_fd, &empty, 1);
+    write(empty_fd, &empty, 1); //Tenemos que usar un syscall diferente ya que este solo escribe en pantalla
 
   print_commands();
 
@@ -45,7 +44,7 @@ static void producer() {
 
   /* Lee espacios vacíos en empty_fd y escribe ítems en full_fd */
   while(1) {
-    read(empty_fd,  &message, 1);
+    read(empty_fd,  &message, 1); // TBI una nueva syscall que nos permita leer de un fd
     int item = rand_int();
     printf("Produced: %d\n", item);
     sleep(producerSleep * SLEEP_MULTIPLIER);
@@ -62,7 +61,7 @@ static void consumer() {
 
   /* Lee ítems en full_fd y escribe slots vacíos en empt_fd */
   while(1) {
-    read(full_fd,  &item, sizeof(int));
+    read(full_fd,  &item, sizeof(int)); // lee el valor a una variable ?
     printf("Consumed: %d\n", item);
     sleep(consumerSleep * SLEEP_MULTIPLIER);
     write(empty_fd, &message, 1);
