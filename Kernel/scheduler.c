@@ -82,8 +82,12 @@ uint64_t exec_process(process * new_process) {
 
 	pid = pid_process(new_process);
 	actual_pid= pid_process (current->p);
-	printf("pid: %d\n", pid);
-	printf("pid_actual: %d\n", get_rsp_process(current->p));
+	printString("pid: ");
+	ncPrintDec(pid);
+	printString("\n");
+	printString("pid actual: ");
+	ncPrintDec(get_rsp_process(current->p));
+	printString("\n");
 
 	if (pid == 0 ) /*Si es init, cambiamos el sp al de init */
 		_change_process(get_rsp_process(current->p));

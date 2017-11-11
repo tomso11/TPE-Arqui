@@ -28,8 +28,18 @@ uint64_t sys_read(uint64_t fds, char * buffer, uint64_t bytes) {
 	unsigned int i = 0;
 	char c;
 	int block=-1;
+		c = poll_keyboard_buffer(buffer,bytes); // con la implementacion actual se lee de a un caracter
+		if (c != '\0') {
+			block=0;
+		}
+		else{
+			block= -1;
+		}
+
+		// con la implementacion actual se lee de a un caracter
+		/*
 		if(fds == STDIN){
-			c = poll_keyboard_buffer(buffer,bytes); // con la implementacion actual se lee de a un caracter
+			c = poll_keyboard_buffer(buffer,bytes); 
 			if (c != '\0') {
 				block=0;
 			} 
@@ -40,6 +50,7 @@ uint64_t sys_read(uint64_t fds, char * buffer, uint64_t bytes) {
 		else if (fds >= FILE_DESCRIPTORS){
 			i=fifo_read(fds_to_fifo(fds), buffer, bytes);
 		}
+		*/
     return block;
 }
 
@@ -53,9 +64,11 @@ uint64_t sys_write(uint64_t fds, const char  str, uint64_t length) {
 	else if (fds == STDOUT) {
 		printChar(str);
 	}
+	/*
 	else if (fds >= FILE_DESCRIPTORS){
 		n=fifo_write(fds_to_fifo(fds), str, length);
 	}
+	*/
 	return 0;
 }
 

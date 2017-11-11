@@ -7,14 +7,14 @@
 /* SystemCall Read */
 int read(unsigned int fd, char *buff, unsigned int bytes) {
      int i;
-     readC(fd, buff,bytes);
+     readC(buff,bytes);
      return i;
 }
 
 /* SystemCall Write */
 int write(unsigned int fd, char buff, unsigned int bytes) {
     int i;
-    writeC(fd,buff,bytes);
+    writeC(buff,bytes);
     return i;
 }
 

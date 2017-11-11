@@ -10,6 +10,7 @@
 #include <shell.h>
 #include "condVariable.h"
 
+
 #include "process.h"
 #include "memoryAllocator.h"
 
@@ -33,12 +34,12 @@ static void * const ModuleBAddress= (void*)0xC00000;
 static void * const currentAddress = (void*)0x700000; // address logico donde compila nuestro modulo
 static void * const dumbModuleAddress = (void*)0xA00000;
 
-void tick_handler();
 
 typedef int (*EntryPoint)();
 typedef int (*EntryPointS)(int);
 typedef void (*handler_t)(void);
 
+void tick_handler();
 void init();
 int choose_mod(char c);
 void int_test();

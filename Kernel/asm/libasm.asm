@@ -1,3 +1,4 @@
+
 GLOBAL cpuVendor
 GLOBAL run_mod
 
@@ -71,6 +72,7 @@ EXTERN sys_exec
 EXTERN timer_handler
 EXTERN next_process
 EXTERN irqDispatcher
+GLOBAL tick_handler
 
 
 %include "./asm/macros.m"
@@ -288,122 +290,152 @@ write:
 	cmp eax,4
 	jne clear
 	call sys_write
+	jp finish
 clear:
 	cmp eax,5
 	jne time
 	call sys_clear
+	jp finish
 time:
 	cmp eax,6
 	jne exec
 	call sys_time
+	jp finish
 exec:
 	cmp eax,7
 	jne wait_label
 	call sys_exec
+	jp finish
 wait_label:
 	cmp eax,8
 	jne reserve
 	call sys_wait
+	jp finish
 reserve:
 	cmp eax,9
 	jne free
 	call sys_malloc
+	jp finish
 free:
 	cmp eax,10
 	jne data
 	call sys_free
+	jp finish
 data:
 	cmp eax,11
 	jne end
 	call sys_data_address
+	jp finish
 end:
 	cmp eax,12
 	jne end 
 	call sys_end
+	jp finish
 yield:
 	cmp eax,13
 	jne mutex_op
 	call sys_yield
+	jp finish
 mutex_op:
 	cmp eax,14
 	jne mutex_cl
 	call sys_mutex_op
+	jp finish
 mutex_cl:
 	cmp eax,15
 	jne mutex_lo
 	call sys_mutex_cl
+	jp finish
 mutex_lo:
 	cmp eax,16
 	jne mutex_ul
 	call sys_mutex_lock
+	jp finish
 mutex_ul:
 	cmp eax,17
 	jne set_fg
 	call sys_mutex_unlock
+	jp finish
 set_fg:
 	cmp eax,18
 	jne fifo_op
 	call sys_set_foreground
+	jp finish
 fifo_op:
 	cmp eax,19
 	jne fifo_cl
 	call sys_fifo_op
+	jp finish
 fifo_cl:
 	cmp eax,20
 	jne kill
 	call sys_fifo_cl
+	jp finish
 kill:
 	cmp eax,21
 	jne pid
 	call sys_kill
+	jp finish
 pid:
 	cmp eax,22
 	jne ppid
 	call sys_pid
+	jp finish
 ppid:
 	cmp eax,23
 	jne get_process_info
 	call sys_ppid
+	jp finish
 get_process_info:
 	cmp eax,24
 	jne cond_op
 	call sys_process_info
+	jp finish
 cond_op:
 	cmp eax,25
 	jne cond_wait
 	call sys_cond_open
+	jp finish
 cond_wait:
 	cmp eax,26
 	jne cond_signal
 	call sys_cond_wait
+	jp finish
 cond_signal:
 	cmp eax,27
 	jne cond_bc
 	call sys_cond_signal
+	jp finish
 cond_bc:
 	cmp eax,28
 	jne cond_cl
 	call sys_cond_broadcast
+	jp finish
 cond_cl:
 	cmp eax,29
 	jne get_current_pids
 	call sys_cond_close
+	jp finish
 get_current_pids:
 	cmp eax,30
 	jne get_conds_info
 	call sys_get_pids
+	jp finish
 get_conds_info:
 	cmp eax,31
 	jne get_mutexes_info
 	call sys_get_conds_info
+	jp finish
 get_mutexes_info:
 	cmp eax,32
 	jne get_fifos_info
 	call sys_get_mutexes_info
+	jp finish
 get_fifos_info:
 	cmp eax,33
 	jne finish
 	call sys_get_fifos_info
+	jp finish
 finish:
 	mov rdi,rax
 	mov al, 20h
